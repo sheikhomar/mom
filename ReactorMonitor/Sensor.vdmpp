@@ -2,7 +2,7 @@ class Sensor
 
 types
 
-public Reading = int
+public Reading = [int] -- Make reading an Optional Type
 
 instance variables
 

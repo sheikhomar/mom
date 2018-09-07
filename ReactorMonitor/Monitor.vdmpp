@@ -3,11 +3,11 @@ class Monitor
 
 types
 
-public Alarm = <SYSTEM_UNSAFE>;
+public Alarm = <SYSTEM_UNSAFE> | <NIL_DETECTED>;
 
 public Readings = seq of Sensor`Reading
 inv readings == 
-	len readings = 5;
+	len readings = MAX_READINGS;
 
 
 
@@ -27,11 +27,31 @@ Monitor(sensorParam) ==
 public Step : () ==> ()
 Step() ==
   (
-  	tmp := MiddleReading(readings);
-  	
     readings := tl readings ^ [sensor.ReadTemp()];
-    if not Safe(readings)
+
+		-- Dump readings on the console
+    Dump();
+
+    if OnePeak(readings)
+    then IO`print("Exactly one reading in the sample is larger than 400.\n");
+
+    if HasNil(readings)
+    then ReactorMonitor`RaiseAlarm(<NIL_DETECTED>)
+    elseif not Safe(readings)
     then ReactorMonitor`RaiseAlarm(<SYSTEM_UNSAFE>);
+  );
+
+public Dump : () ==> ()
+Dump() ==
+  (
+    IO`print("> Monitor.readings = [");
+    IO`print(hd readings);
+    for reading in tl readings do
+    (
+      IO`print(", ");
+      IO`print(reading);
+    );
+    IO`print("]\n");
   );
 
 
@@ -39,20 +59,23 @@ Step() ==
 functions
 
 -- the last reading in a sample is greater than the first
+-- This will effected by nil values
 public Rising: Readings -> bool
 Rising(readings) ==
-	readings(len readings) > readings(1);
+	readings(len readings) > readings(1)
+	pre readings(len readings) <> nil and readings(1) <> nil;
 
 -- there is a reading in excess of 400 degrees
 public OverLimit: Readings -> bool
 OverLimit(readings) ==
-	exists reading in seq readings & reading > 400;
+	exists reading in seq readings & reading <> nil and reading > 400;
 
 -- all readings in a sample exceed 400 degrees
 public COverLimit: Readings -> bool
 COverLimit(readings) ==
   --forall index in set inds readings & readings(index) > 400;
-  forall reading in seq readings & reading > 400;
+  forall reading in seq readings & reading > 400
+  pre forall reading in seq readings & reading <> nil;
 
 -- detecting whether a reactor can be considered safe
 -- Safe: If readings do not exceed 400 C by the middle of the 
@@ -61,21 +84,26 @@ COverLimit(readings) ==
 -- the reading at the end of the sample is less than 400 C. 
 public Safe: Readings -> bool
 Safe(readings) ==
-	MiddleReading(readings) > 400 => readings(len readings) < 400;
+	MiddleReading(readings) > 400 => readings(len readings) < 400
+	pre MiddleReading(readings) <> nil and readings(len readings) <> nil;
 
 -- detecting whether an alarm should be raised
 -- Note this is an implicit function declaration
 public RaiseAlarm(readings: Readings) alarm : bool
-post not Safe(readings) = alarm; -- to be replaced with a new expression
+post not Safe(readings) = alarm;
 
 -- exactly one reading in the sample is in excess of 400
 public OnePeak: Readings -> bool
 OnePeak(readings) ==
-  -- len( [ reading | reading in readings & reading > 400 ] ) = 1
-	-- len([readings(i) | i in set inds readings & readings(i) > 400 ]) = 1
-	exists i in set inds readings &
-		forall j in set inds readings &
-			i <> j => readings(i) > readings(j);
+  len( [ reading | reading in seq readings & reading <> nil and reading > 400 ] ) = 1;
+	--exists i in set inds readings &
+	--	forall j in set inds readings &
+	--		i <> j => readings(i) > 400 and readings(j) < 400;
+
+public HasNil: Readings -> bool
+HasNil(readings) ==
+	exists reading in seq readings & reading = nil;
+
 
 -- Returns the middle reading
 private MiddleReading: Readings -> Sensor`Reading
@@ -83,15 +111,18 @@ MiddleReading(readings) ==
   readings(len(readings) div 2 + 1);
 
 
+
 values
 
+MAX_READINGS = 5
+
 -- values to be used for test purposes
-mon1 = [350,365,421,390,380];
-mon2 = [350,390,320,395,330];
-mon3 = [345,341,433,321,314];
-mon4 = [450,465,421,590,480];
-mon5 = [350,390,420,395,430];
-mon6 = [345,341,433,321,314];
+--mon1 = [350,365,421,390,380];
+--mon2 = [350,390,320,395,330];
+--mon3 = [345,341,433,321,314];
+--mon4 = [450,465,421,590,480];
+--mon5 = [350,390,420,395,430];
+--mon6 = [345,341,433,321,314];
 
 
 end Monitor

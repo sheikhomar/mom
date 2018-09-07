@@ -15,7 +15,7 @@ operations
 public ReactorMonitor : () ==> ReactorMonitor
 ReactorMonitor() ==
   (
-  	env := new Environment(temps1);
+    env := new Environment(temps4);
 		sensor := new Sensor(env);
 		monitor := new Monitor(sensor);
 		isFinished := false;
@@ -23,7 +23,13 @@ ReactorMonitor() ==
 
 public static RaiseAlarm : Monitor`Alarm ==> ()
 RaiseAlarm(alarm) ==
-	IO`print("ALARM: System is unsafe.\n");
+	if alarm = <SYSTEM_UNSAFE>
+	then IO`print("ALARM: System is unsafe.\n")
+	elseif alarm = <NIL_DETECTED>
+	then (
+		IO`print("ALARM: Nil detected.\n");
+		isFinished := true;
+	);
 
 public Run : () ==> ()
 Run() ==
@@ -54,5 +60,9 @@ temps2 = [387,384,381,383,384,385,400,401,402,403,399];
 
 -- Should not raise any alarms
 temps3 = [387,384,381,383,384,385,400,401,402,399,399];
+
+-- Should detect nil value
+temps4 = [387,nil,381,383,384,385,400,401,402,403,402];
+
 
 end ReactorMonitor
