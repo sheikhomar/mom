@@ -1,22 +1,30 @@
 class Main
 
 types
+
 public SS = set of set of nat
 
 
-values
--- TODO Define values here
-instance variables
--- TODO Define instance variables here
+
 operations
 
 public Run: () ==> ()
 Run() ==
   (
     IO`print("Running Homework 3...\n");
-    
+
     TestPairwiseDisjoint({ {2, 3}, {4, 9}, {3, 8} }, false);
     TestPairwiseDisjoint({ {2, 3}, {4, 9}, {1, 8} }, true);
+
+    TestElements({ {2, 3}, {4, 9}, {3, 8} }, {2, 3, 4, 8, 9});
+    TestElements({ {2, 3}, {4, 9}, {1, 8} }, {1, 2, 3, 4, 8, 9});
+
+    TestIsPartition({ { 1, 2 }, {3, 4} }, {1, 2}, true);
+    TestIsPartition({ { 1, 2 }, {3, 4} }, {1}, false);
+    TestIsPartition({ { 1, 2 }, {3, 4}, {2, 3, 4} }, {1, 3}, false);
+
+    TestSumSS({ {2, 3}, {4, 9, 2}, {3, 8, 1}, {10} }, 42);
+    TestSumSS({ {2, 3, 4, 9}, {1, 8, 10} }, 40);
   );
 
 public TestPairwiseDisjoint: SS * bool ==> ()
@@ -26,7 +34,41 @@ TestPairwiseDisjoint(setOfSets, expectedResult) ==
     then IO`print("PairwiseDisjoint returned the wrong result!\n");
   );
 
+public TestElements: SS * set of nat ==> ()
+TestElements(setOfSets, expectedResult) ==
+  (
+    if Elements(setOfSets) <> expectedResult
+    then IO`print("Elements returned the wrong result!\n");
+  );
+
+public TestIsPartition: SS * set of nat * bool ==> ()
+TestIsPartition(setOfSets, numbers, expectedResult) ==
+  (
+    let actualValue: bool = IsPartition(setOfSets, numbers) in
+    if actualValue <> expectedResult
+    then IO`print("IsPartition returned the wrong result!\n");
+  );
+
+public TestSumSS: SS * nat ==> ()
+TestSumSS(setOfSets, expectedResult) ==
+  (
+    let actualValue: nat = SumSS(setOfSets) in
+    if actualValue <> expectedResult
+    then (
+      IO`print("SumSS returned the wrong result: ");
+      IO`print(" Expected=");
+      IO`print(expectedResult);
+      IO`print(" Actual=");
+      IO`print(actualValue);
+      IO`print("\n");
+    );
+  );
+
+
+
+
 functions
+
 
 -- The pairwiseDisjoint function takes a value belonging to the SS type and 
 -- yields true if and only if all the sets in the set of sets have no elements
@@ -38,6 +80,33 @@ PairwiseDisjoint(setOfSets) ==
     -- Intersection between each pair of sets
     -- is the empty set if pairwise disjoint
     s1 <> s2 => s1 inter s2 = {}; 
+
+
+-- Takes a value from the SS type and yields a set of natural numbers
+-- that are all those that are members of any of the element sets.
+public Elements: SS -> set of nat
+Elements(setOfSets) ==
+  -- We can flatten a set of sets to a single set by taking
+  -- the union of the elements sets.
+  dunion setOfSets;
+
+
+-- Returns true if and only if the first element is a partition of the
+-- second argument, i.e. all members from the second argument are present
+-- in one and only one of the sets in the first argument and there are no
+-- elements in any of the sets in the first argument that are not present
+-- in the second argument.
+public IsPartition: SS * set of nat -> bool
+IsPartition(setOfSets, numbers) ==
+  numbers in set setOfSets;
+
+
+-- Returns the sum of all elements that are inside any of the element sets.
+public SumSS: SS -> nat
+SumSS(setOfSets) ==
+  let sum: nat = 0 in
+    let el in set Elements(setOfSets) in
+      sum + el;
 
 
 end Main
