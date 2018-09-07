@@ -1,0 +1,43 @@
+class Main
+
+types
+public SS = set of set of nat
+
+
+values
+-- TODO Define values here
+instance variables
+-- TODO Define instance variables here
+operations
+
+public Run: () ==> ()
+Run() ==
+  (
+    IO`print("Running Homework 3...\n");
+    
+    TestPairwiseDisjoint({ {2, 3}, {4, 9}, {3, 8} }, false);
+    TestPairwiseDisjoint({ {2, 3}, {4, 9}, {1, 8} }, true);
+  );
+
+public TestPairwiseDisjoint: SS * bool ==> ()
+TestPairwiseDisjoint(setOfSets, expectedResult) ==
+  (
+    if PairwiseDisjoint(setOfSets) <> expectedResult
+    then IO`print("PairwiseDisjoint returned the wrong result!\n");
+  );
+
+functions
+
+-- The pairwiseDisjoint function takes a value belonging to the SS type and 
+-- yields true if and only if all the sets in the set of sets have no elements
+-- overlapping with any of the other sets.  Otherwise, the function shall 
+-- yields false.
+public PairwiseDisjoint: SS -> bool
+PairwiseDisjoint(setOfSets) ==
+  forall s1, s2 in set setOfSets & 
+    -- Intersection between each pair of sets
+    -- is the empty set if pairwise disjoint
+    s1 <> s2 => s1 inter s2 = {}; 
+
+
+end Main
