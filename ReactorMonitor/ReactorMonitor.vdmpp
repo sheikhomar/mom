@@ -1,0 +1,58 @@
+class ReactorMonitor
+
+
+instance variables
+
+public static isFinished : bool := false;
+private env : Environment;
+private sensor : Sensor;
+private monitor : Monitor;
+
+
+
+operations
+
+public ReactorMonitor : () ==> ReactorMonitor
+ReactorMonitor() ==
+  (
+  	env := new Environment(temps1);
+		sensor := new Sensor(env);
+		monitor := new Monitor(sensor);
+		isFinished := false;
+  );
+
+public static RaiseAlarm : Monitor`Alarm ==> ()
+RaiseAlarm(alarm) ==
+	IO`print("ALARM: System is unsafe.\n");
+
+public Run : () ==> ()
+Run() ==
+  (
+		while(not isFinished)
+		do
+		(
+			monitor.Step();
+		);
+		
+		IO`print("Run complete!\n");
+	);
+
+public static Finish : () ==> ()
+Finish() ==
+	ReactorMonitor`isFinished := true;
+
+
+
+
+values
+
+-- Should raise the alarm twice
+temps1 = [387,384,381,383,384,385,400,401,402,403,402];
+
+-- Should raise the alarm once
+temps2 = [387,384,381,383,384,385,400,401,402,403,399];
+
+-- Should not raise any alarms
+temps3 = [387,384,381,383,384,385,400,401,402,399,399];
+
+end ReactorMonitor

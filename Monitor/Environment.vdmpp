@@ -1,7 +1,0 @@
-class Environment
-
-types
-
-public Reading = int
-
-end Environment

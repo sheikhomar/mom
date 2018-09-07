@@ -3,8 +3,37 @@ class Monitor
 
 types
 
+public Alarm = <SYSTEM_UNSAFE>;
+
 public Readings = seq of Sensor`Reading
-inv readings == len readings = 8;
+inv readings == 
+	len readings = 5;
+
+
+
+instance variables
+
+private readings : Readings := [0, 0, 0, 0, 0];
+private sensor : Sensor;
+private tmp : Sensor`Reading;
+
+
+operations
+
+public Monitor : Sensor ==> Monitor
+Monitor(sensorParam) ==
+  sensor := sensorParam;
+
+public Step : () ==> ()
+Step() ==
+  (
+  	tmp := MiddleReading(readings);
+  	
+    readings := tl readings ^ [sensor.ReadTemp()];
+    if not Safe(readings)
+    then ReactorMonitor`RaiseAlarm(<SYSTEM_UNSAFE>);
+  );
+
 
 
 functions
@@ -32,7 +61,7 @@ COverLimit(readings) ==
 -- the reading at the end of the sample is less than 400 C. 
 public Safe: Readings -> bool
 Safe(readings) ==
-	readings(len readings mod 2) > 400 => readings(len readings) < 400;
+	MiddleReading(readings) > 400 => readings(len readings) < 400;
 
 -- detecting whether an alarm should be raised
 -- Note this is an implicit function declaration
@@ -46,7 +75,13 @@ OnePeak(readings) ==
 	-- len([readings(i) | i in set inds readings & readings(i) > 400 ]) = 1
 	exists i in set inds readings &
 		forall j in set inds readings &
-			i <> j => readings(i) > readings(j)
+			i <> j => readings(i) > readings(j);
+
+-- Returns the middle reading
+private MiddleReading: Readings -> Sensor`Reading
+MiddleReading(readings) ==
+  readings(len(readings) div 2 + 1);
+
 
 values
 

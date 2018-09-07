@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Monitor</name>
+	<name>ReactorMonitor</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -11,6 +11,10 @@
 				<dictionary>
 					<key>LANGUAGE_VERSION</key>
 					<value>vdm10</value>
+				</dictionary>
+				<dictionary>
+					<key>SUPPRESS_WARNINGS</key>
+					<value>false</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>

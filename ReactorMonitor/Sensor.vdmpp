@@ -1,0 +1,21 @@
+class Sensor
+
+types
+
+public Reading = int
+
+instance variables
+
+private env : Environment;
+
+operations
+
+public Sensor : Environment ==> Sensor
+Sensor(e) ==
+	env := e;
+
+public ReadTemp : () ==> Reading
+ReadTemp() ==
+	env.NextTemp();
+
+end Sensor

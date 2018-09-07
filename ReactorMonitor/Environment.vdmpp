@@ -1,0 +1,27 @@
+class Environment
+
+instance variables
+
+private readings : seq of Sensor`Reading
+
+
+
+operations
+
+public Environment : seq1 of Sensor`Reading ==> Environment
+Environment(readingsParam) ==
+  readings := readingsParam;
+
+public NextTemp : () ==> Sensor`Reading
+NextTemp() == 
+  let t : Sensor`Reading = hd readings in
+  (
+  	readings := tl readings;
+  	if readings = []
+  	then ReactorMonitor`Finish();
+  	return t;
+  )
+pre readings <> [];
+
+
+end Environment
