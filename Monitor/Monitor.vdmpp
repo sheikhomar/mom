@@ -1,0 +1,62 @@
+class Monitor
+
+
+types
+
+public Readings = seq of Sensor`Reading
+inv readings == len readings = 8;
+
+
+functions
+
+-- the last reading in a sample is greater than the first
+public Rising: Readings -> bool
+Rising(readings) ==
+	readings(len readings) > readings(1);
+
+-- there is a reading in excess of 400 degrees
+public OverLimit: Readings -> bool
+OverLimit(readings) ==
+	exists reading in seq readings & reading > 400;
+
+-- all readings in a sample exceed 400 degrees
+public COverLimit: Readings -> bool
+COverLimit(readings) ==
+  --forall index in set inds readings & readings(index) > 400;
+  forall reading in seq readings & reading > 400;
+
+-- detecting whether a reactor can be considered safe
+-- Safe: If readings do not exceed 400 C by the middle of the 
+-- sample, the reactor is safe. If readings exceed 400 C by the 
+-- middle of the sample, the reactor is still safe provided that 
+-- the reading at the end of the sample is less than 400 C. 
+public Safe: Readings -> bool
+Safe(readings) ==
+	readings(len readings mod 2) > 400 => readings(len readings) < 400;
+
+-- detecting whether an alarm should be raised
+-- Note this is an implicit function declaration
+public RaiseAlarm(readings: Readings) alarm : bool
+post not Safe(readings) = alarm; -- to be replaced with a new expression
+
+-- exactly one reading in the sample is in excess of 400
+public OnePeak: Readings -> bool
+OnePeak(readings) ==
+  -- len( [ reading | reading in readings & reading > 400 ] ) = 1
+	-- len([readings(i) | i in set inds readings & readings(i) > 400 ]) = 1
+	exists i in set inds readings &
+		forall j in set inds readings &
+			i <> j => readings(i) > readings(j)
+
+values
+
+-- values to be used for test purposes
+mon1 = [350,365,421,390,380];
+mon2 = [350,390,320,395,330];
+mon3 = [345,341,433,321,314];
+mon4 = [450,465,421,590,480];
+mon5 = [350,390,420,395,430];
+mon6 = [345,341,433,321,314];
+
+
+end Monitor

@@ -1,0 +1,7 @@
+class Sensor
+
+types
+
+public Reading = int
+
+end Sensor
