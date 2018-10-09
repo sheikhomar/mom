@@ -1,0 +1,27 @@
+class Environment
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+
+busy : bool := false;
+
+operations
+
+public Environment: () ==> Environment
+Environment () ==
+  busy := true;
+
+
+public Run: () ==> ()
+Run () == 
+  busy := true;
+
+
+
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Environment

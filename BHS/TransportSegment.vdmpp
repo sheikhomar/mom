@@ -1,0 +1,33 @@
+class TransportSegment is subclass of Global
+types
+
+values
+
+instance variables
+
+private fromStation : TransportStation;
+private toStation : TransportStation;
+private distance : Distance;
+
+operations
+
+public TransportSegment : TransportStation * TransportStation * Distance  ==> TransportSegment
+TransportSegment(pFromStation, pToStation, pDistance) ==
+  (
+    fromStation := pFromStation;
+    toStation := pToStation;
+    distance := pDistance;
+  );
+
+public Step : () ==> ()
+Step() ==
+  (
+    skip
+  );
+
+
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end TransportSegment

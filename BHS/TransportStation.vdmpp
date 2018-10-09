@@ -1,0 +1,42 @@
+class TransportStation
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+
+
+
+
+instance variables
+
+private name : seq1 of char;
+private id: nat;
+
+operations
+
+public TransportStation : nat * seq1 of char ==> TransportStation
+TransportStation(pId, pName) ==
+  (
+    id := pId;
+    name := pName;
+  );
+
+public Print : () ==> ()
+Print() == 
+  (
+    IO`print("ID: ");
+    IO`print(id);
+    IO`print(" Name: ");
+    IO`print(name);
+  );
+
+pure public GetId : () ==> nat
+GetId() ==
+  return id;
+
+
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end TransportStation

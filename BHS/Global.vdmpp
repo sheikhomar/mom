@@ -1,0 +1,19 @@
+-- Base class of all other classes
+class Global
+
+types
+
+public Distance = nat1; -- Unit: cm
+
+
+values
+-- TODO Define values here
+instance variables
+-- TODO Define instance variables here
+operations
+-- TODO Define operations here
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end Global

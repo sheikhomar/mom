@@ -1,0 +1,27 @@
+class World 
+
+types
+
+instance variables
+
+public static env : [Environment] := nil;
+public static timer : Timer := Timer`GetInstance();
+private transport : BaggageTransport;
+
+operations
+
+public World: () ==> World
+World () ==
+  (
+    transport := BaggageTransport`LoadSampleLayout1();
+    env := new Environment();
+  );
+
+public Run: () ==> ()
+Run () == 
+  (
+    IO`print("Running the World!");
+    env.Run();
+  );
+
+end World

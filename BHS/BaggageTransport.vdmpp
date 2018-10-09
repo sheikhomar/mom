@@ -1,0 +1,96 @@
+-- Represents transportation system. It is a directed graph 
+-- where stations are represented as nodes and segments 
+-- are represented as edges.
+class BaggageTransport is subclass of Global
+types
+
+public TransportLayout = seq of TransportStation * seq1 of (seq1 of nat);
+
+
+values
+
+public SampleLayout1 : TransportLayout = mk_(
+  [
+    new TransportStation(1, "CheckIn1"),
+    new TransportStation(2, "CheckIn2"),
+    new TransportStation(3, "Combiner1")
+  ],
+  [
+    [0, 0, 30],
+    [0, 0, 20],
+    [0, 0,  0]
+  ]
+)
+
+instance variables
+
+private stations : map nat to TransportStation;
+private segments : set of TransportSegment;
+
+
+operations
+
+public BaggageTransport: () ==> BaggageTransport
+BaggageTransport() ==
+  (
+    stations := { |-> };
+    segments := {};
+  );
+
+
+public static LoadSampleLayout1 : () ==> BaggageTransport
+LoadSampleLayout1() ==
+  return Load(SampleLayout1);
+
+public static Load : TransportLayout ==> BaggageTransport
+Load(layout) == 
+  (
+    dcl bt : BaggageTransport := new BaggageTransport();
+    def mk_(stationSeq, distanceMatrix) = layout in
+    (
+      for station in stationSeq do
+      (
+        bt.AddStation(station);
+      );
+      for all i in set inds distanceMatrix do
+      (
+        for all j in set inds distanceMatrix(i) do
+        (
+          if distanceMatrix(i)(j) <> 0 
+          then (
+            dcl s1 : TransportStation := stationSeq(i);
+            dcl s2 : TransportStation := stationSeq(j);
+            dcl distance : nat1 := distanceMatrix(i)(j);
+            dcl segment : TransportSegment := 
+              new TransportSegment(s1, s2, distance);
+            bt.AddSegment(segment);
+            skip;
+          );
+        );
+      );
+    );
+    return bt;
+  );
+
+
+public AddStation : TransportStation ==> ()
+AddStation(pStation) ==
+  (
+    stations := stations munion { pStation.GetId() |-> pStation };
+  );
+-- TODO: Precondition, ensure that station id does not exit
+
+public AddSegment : TransportSegment ==> ()
+AddSegment(pSegment) ==
+  (
+    segments := segments union { pSegment };
+  );
+-- TODO: Add precondition to ensure that 
+-- 1) A segment with the same from and to station cannot exist
+-- 2) Two segments with the same set of stations cannot exist
+
+functions
+
+traces
+-- TODO Define Combinatorial Test Traces here
+end BaggageTransport
