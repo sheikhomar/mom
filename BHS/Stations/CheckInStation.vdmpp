@@ -4,7 +4,9 @@ types
 values
 -- TODO Define values here
 instance variables
--- TODO Define instance variables here
+
+private currentTote : [Tote] := nil;
+
 operations
 
 public CheckInStation : StationID * seq of char ==> CheckInStation
@@ -13,20 +15,29 @@ CheckInStation(pId, pName) ==
 
 
 pure public CanProcess : () ==> bool
-CanProcess() ==
-  return true;
+CanProcess() == return currentTote = nil
+pre HasCorrectSegmentConfiguration(GetId(), segments);
 
 public Process : Tote ==> ()
-Process(tote) ==
-  (
-    skip;
-  );
+Process(pTote) == currentTote := pTote;
 
 public Step : () ==> ()
-Step() == skip;
+Step() ==
+  let segment in set segments
+  in
+    if currentTote <> nil and segment.CanProcess()
+    then (
+      segment.Process(currentTote);
+      currentTote := nil;
+    );
 
 functions
--- TODO Define functiones here
+
+private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
+HasCorrectSegmentConfiguration(pId, pSegments) ==
+   card pSegments = 1 and
+   exists segment in set pSegments & segment.GetSourceStation().GetId() = pId;
+
 traces
 -- TODO Define Combinatorial Test Traces here
 end CheckInStation
