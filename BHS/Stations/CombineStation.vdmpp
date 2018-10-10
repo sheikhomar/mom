@@ -1,0 +1,75 @@
+class CombineStation is subclass of Station
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+
+private currentTote : [Tote] := nil;
+
+operations
+
+
+public CombineStation : nat * seq of char ==> CombineStation
+CombineStation(pId, pName) ==
+  Station(pId, pName);
+
+public pure CanProcess : () ==> bool
+CanProcess() == return currentTote = nil
+pre EnsureCorrectSegmentConfiguration();
+
+public Process : Tote ==> ()
+Process(pTote) == currentTote := pTote;
+
+public Step : () ==> ()
+Step() ==
+  (
+    dcl outSegment : Segment := GetOutSegment();
+    if currentTote <> nil and outSegment.CanProcess()
+    then (
+      outSegment.Process(currentTote);
+      currentTote := nil; -- Clean up so we can process the next tote
+    )
+  );
+
+
+
+private pure EnsureCorrectSegmentConfiguration: () ==> bool
+EnsureCorrectSegmentConfiguration() ==
+  (
+    -- There must be at least one "in" segment and only one "out" segment
+    return card FindInSegments() > 0 and card FindOutSegments() = 1;
+  );
+
+private pure FindInSegments : () ==> set of Segment
+FindInSegments() ==
+  return { seg | seg in set segments & seg.IsTarget(self) };
+
+
+private pure FindOutSegments : () ==> set of Segment
+FindOutSegments() ==
+  return { seg | seg in set segments & seg.IsSource(self) };
+
+
+private pure GetOutSegment : () ==> Segment
+GetOutSegment() ==
+  let segment in set segments be st segment.IsSource(self)
+  in return segment;
+
+
+functions
+
+private HasCorrectSegmentConfiguration: nat * set of Segment -> bool
+HasCorrectSegmentConfiguration(id, segments) ==
+  -- TODO: Why the warning "Pure operation call may not be referentially transparent"
+  -- There must be at least one "in" segment and only one "out" segment
+  exists segment in set segments & segment.GetSourceStation().GetId()=id and
+  exists s1 in set segments &
+    forall s2 in set segments &
+      s1 <> s2 =>
+        s1.GetTargetStation().GetId() = id and
+        s2.GetTargetStation().GetId() <> id;
+
+traces
+-- TODO Define Combinatorial Test Traces here
+end CombineStation

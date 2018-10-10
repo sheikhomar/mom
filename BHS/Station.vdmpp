@@ -4,35 +4,46 @@ types
 values
 -- TODO Define values here
 
-
-
-
 instance variables
 
 private name : seq1 of char;
-private id: nat;
+private id : nat;
+protected segments : set of Segment;
 
 operations
+
 
 public Station : nat * seq1 of char ==> Station
 Station(pId, pName) ==
   (
     id := pId;
     name := pName;
+    segments := {};
   );
 
-public Print : () ==> ()
-Print() == 
-  (
-    IO`print("ID: ");
-    IO`print(id);
-    IO`print(" Name: ");
-    IO`print(name);
-  );
+pure public CanProcess : () ==> bool
+CanProcess() == is subclass responsibility;
+
+public Process : Tote ==> bool
+Process(tote) == is subclass responsibility
+pre CanProcess(); -- TODO: Are pre-conditions inherited?
+
+public Step : () ==> ()
+Step() == is subclass responsibility;
 
 pure public GetId : () ==> nat
-GetId() ==
-  return id;
+GetId() == return id;
+
+pure public GetName : () ==> seq of char
+GetName() == return name;
+
+public AddSegment : Segment ==> ()
+AddSegment(pSegment) == segments := segments union { pSegment }
+pre pSegment.HasStation(self);
+
+
+
+
 
 
 functions

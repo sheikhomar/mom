@@ -1,0 +1,32 @@
+class CheckInStation is subclass of Station
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+-- TODO Define instance variables here
+operations
+
+public CheckInStation : nat * seq of char ==> CheckInStation
+CheckInStation(pId, pName) ==
+  Station(pId, pName);
+
+
+pure public CanProcess : () ==> bool
+CanProcess() ==
+  return true;
+
+public Process : Tote ==> ()
+Process(tote) ==
+  (
+    skip;
+  );
+
+public Step : () ==> ()
+Step() == skip;
+
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end CheckInStation

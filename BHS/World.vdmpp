@@ -20,8 +20,9 @@ World () ==
 public Run: () ==> ()
 Run () == 
   (
-    IO`print("Running the World!");
+    IO`print("Running the world!\n");
     env.Run();
+    IO`print("World done!\n");
   );
 
 end World

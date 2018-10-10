@@ -5,25 +5,81 @@ values
 
 instance variables
 
-private fromStation : Station;
-private toStation : Station;
+private source : Station;
+private target : Station;
 private distance : Distance;
 
 operations
 
 public Segment : Station * Station * Distance  ==> Segment
-Segment(pFromStation, pToStation, pDistance) ==
+Segment(pSourceStation, pTargetStation, pDistance) ==
   (
-    fromStation := pFromStation;
-    toStation := pToStation;
+    source := pSourceStation;
+    target := pTargetStation;
     distance := pDistance;
-  );
+
+    -- Back reference
+    source.AddSegment(self);
+    target.AddSegment(self);
+  )
+-- Ensure that source and destination stations are different.
+pre pSourceStation.GetId() <> pTargetStation.GetId();
+
+public pure GetSourceStation : () ==> Station
+GetSourceStation() == return source;
+
+public pure GetTargetStation : () ==> Station
+GetTargetStation() == return target;
+
+-- Determines whether the given station is on this segment.
+public pure HasStation : Station ==> bool
+HasStation(pStation) ==
+  return pStation.GetId() = source.GetId() or
+         pStation.GetId() = target.GetId();
+
+public pure IsSource : Station ==> bool
+IsSource(pStation) ==
+  return pStation.GetId() = source.GetId();
+
+public pure IsTarget : Station ==> bool
+IsTarget(pStation) ==
+  return pStation.GetId() = target.GetId();
+
+public pure CanProcess : () ==> bool
+CanProcess() ==
+  -- TODO: Determine whether there is space on the segment
+  return true;
+
+public Process : Tote ==> ()
+Process(tote) ==
+  -- TODO: Add the tote to the segment with a position
+  skip;
 
 public Step : () ==> ()
 Step() ==
   (
+    -- TODO:
+    -- 1) Find the next tote to process
+    -- 2) If the target station can process the tote
+    -- 3)   Call TargetStation.Process(tote)
+    -- 4)   Remove tote from the segment
+    -- 5) Change the position of all totes
     skip
   );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 functions

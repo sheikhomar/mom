@@ -11,9 +11,9 @@ values
 
 public SampleLayout1 : TransportLayout = mk_(
   [
-    new Station(1, "CheckIn1"),
-    new Station(2, "CheckIn2"),
-    new Station(3, "Combiner1")
+    new CheckInStation(1, "CheckIn1"),
+    new CheckInStation(2, "CheckIn2"),
+    new CombineStation(3, "Combiner1")
   ],
   [
     [0, 0, 30],
@@ -88,6 +88,16 @@ AddSegment(pSegment) ==
 -- TODO: Add precondition to ensure that 
 -- 1) A segment with the same from and to station cannot exist
 -- 2) Two segments with the same set of stations cannot exist
+
+public Step : () ==> ()
+Step() ==
+  (
+    for all station in set rng stations
+    do station.Step();
+
+    for all segment in set segments
+    do segment.Step();
+  );
 
 functions
 
