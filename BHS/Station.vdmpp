@@ -1,4 +1,4 @@
-class TransportStation
+class Station
 types
 -- TODO Define types here
 values
@@ -14,8 +14,8 @@ private id: nat;
 
 operations
 
-public TransportStation : nat * seq1 of char ==> TransportStation
-TransportStation(pId, pName) ==
+public Station : nat * seq1 of char ==> Station
+Station(pId, pName) ==
   (
     id := pId;
     name := pName;
@@ -39,4 +39,4 @@ functions
 -- TODO Define functiones here
 traces
 -- TODO Define Combinatorial Test Traces here
-end TransportStation
+end Station

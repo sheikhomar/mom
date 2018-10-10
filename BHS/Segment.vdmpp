@@ -1,18 +1,18 @@
-class TransportSegment is subclass of Global
+class Segment is subclass of Global
 types
 
 values
 
 instance variables
 
-private fromStation : TransportStation;
-private toStation : TransportStation;
+private fromStation : Station;
+private toStation : Station;
 private distance : Distance;
 
 operations
 
-public TransportSegment : TransportStation * TransportStation * Distance  ==> TransportSegment
-TransportSegment(pFromStation, pToStation, pDistance) ==
+public Segment : Station * Station * Distance  ==> Segment
+Segment(pFromStation, pToStation, pDistance) ==
   (
     fromStation := pFromStation;
     toStation := pToStation;
@@ -30,4 +30,4 @@ functions
 -- TODO Define functiones here
 traces
 -- TODO Define Combinatorial Test Traces here
-end TransportSegment
+end Segment

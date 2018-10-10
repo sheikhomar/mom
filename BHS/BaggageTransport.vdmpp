@@ -1,19 +1,19 @@
 -- Represents transportation system. It is a directed graph 
 -- where stations are represented as nodes and segments 
--- are represented as edges.
+-- between stations are represented as edges.
 class BaggageTransport is subclass of Global
 types
 
-public TransportLayout = seq of TransportStation * seq1 of (seq1 of nat);
+public TransportLayout = seq of Station * seq1 of (seq1 of nat);
 
 
 values
 
 public SampleLayout1 : TransportLayout = mk_(
   [
-    new TransportStation(1, "CheckIn1"),
-    new TransportStation(2, "CheckIn2"),
-    new TransportStation(3, "Combiner1")
+    new Station(1, "CheckIn1"),
+    new Station(2, "CheckIn2"),
+    new Station(3, "Combiner1")
   ],
   [
     [0, 0, 30],
@@ -24,8 +24,8 @@ public SampleLayout1 : TransportLayout = mk_(
 
 instance variables
 
-private stations : map nat to TransportStation;
-private segments : set of TransportSegment;
+private stations : map nat to Station;
+private segments : set of Segment;
 
 
 operations
@@ -58,11 +58,11 @@ Load(layout) ==
         (
           if distanceMatrix(i)(j) <> 0 
           then (
-            dcl s1 : TransportStation := stationSeq(i);
-            dcl s2 : TransportStation := stationSeq(j);
+            dcl s1 : Station := stationSeq(i);
+            dcl s2 : Station := stationSeq(j);
             dcl distance : nat1 := distanceMatrix(i)(j);
-            dcl segment : TransportSegment := 
-              new TransportSegment(s1, s2, distance);
+            dcl segment : Segment := 
+              new Segment(s1, s2, distance);
             bt.AddSegment(segment);
             skip;
           );
@@ -73,14 +73,14 @@ Load(layout) ==
   );
 
 
-public AddStation : TransportStation ==> ()
+public AddStation : Station ==> ()
 AddStation(pStation) ==
   (
     stations := stations munion { pStation.GetId() |-> pStation };
   );
 -- TODO: Precondition, ensure that station id does not exit
 
-public AddSegment : TransportSegment ==> ()
+public AddSegment : Segment ==> ()
 AddSegment(pSegment) ==
   (
     segments := segments union { pSegment };
