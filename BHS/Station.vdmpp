@@ -1,19 +1,21 @@
 class Station
 types
--- TODO Define types here
+
+public StationID = nat
+
 values
 -- TODO Define values here
 
 instance variables
 
 private name : seq1 of char;
-private id : nat;
+private id : StationID;
 protected segments : set of Segment;
 
 operations
 
 
-public Station : nat * seq1 of char ==> Station
+public Station : StationID * seq1 of char ==> Station
 Station(pId, pName) ==
   (
     id := pId;
@@ -31,7 +33,7 @@ pre CanProcess(); -- TODO: Are pre-conditions inherited?
 public Step : () ==> ()
 Step() == is subclass responsibility;
 
-pure public GetId : () ==> nat
+pure public GetId : () ==> StationID
 GetId() == return id;
 
 pure public GetName : () ==> seq of char

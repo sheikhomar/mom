@@ -7,7 +7,7 @@ instance variables
 -- TODO Define instance variables here
 operations
 
-public CheckInStation : nat * seq of char ==> CheckInStation
+public CheckInStation : StationID * seq of char ==> CheckInStation
 CheckInStation(pId, pName) ==
   Station(pId, pName);
 

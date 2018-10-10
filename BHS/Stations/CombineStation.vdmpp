@@ -10,7 +10,7 @@ private currentTote : [Tote] := nil;
 operations
 
 
-public CombineStation : nat * seq of char ==> CombineStation
+public CombineStation : StationID * seq of char ==> CombineStation
 CombineStation(pId, pName) ==
   Station(pId, pName);
 
@@ -59,7 +59,7 @@ GetOutSegment() ==
 
 functions
 
-private HasCorrectSegmentConfiguration: nat * set of Segment -> bool
+private HasCorrectSegmentConfiguration: StationID * set of Segment -> bool
 HasCorrectSegmentConfiguration(id, segments) ==
   -- TODO: Why the warning "Pure operation call may not be referentially transparent"
   -- There must be at least one "in" segment and only one "out" segment
