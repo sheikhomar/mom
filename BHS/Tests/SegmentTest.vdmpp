@@ -17,7 +17,7 @@ setUp() ==
     target := new DischargeStation(2, "Discharge");
     segment := new Segment(source, target, 100);
     tote1 := new Tote(1455, 10);
-    tote2 := new Tote(7375, 12);
+    tote2 := new Tote(7375, 10);
   );
 
 

@@ -57,7 +57,12 @@ public Process : Tote ==> ()
 Process(pTote) ==
   (
     totePositions := totePositions munion { pTote |-> pTote.GetLength() };
-  );
+  )
+pre
+  -- Ensure that the given tote is not already on the segment
+  forall tote in set dom totePositions & tote.GetId() <> pTote.GetId()
+  -- And we can actually process the tote.
+  and CanProcess(pTote);
 
 public Step : () ==> ()
 Step() ==
