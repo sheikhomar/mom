@@ -39,35 +39,4 @@ TestCanProcessWhenRearToteIsInTheWay() ==
     Assert`assertFalse(segment.CanProcess(tote2));
   );
 
-
-
-
-/*
- * Tests for Segment.GetRearTote()
- */
-
-public TestGetRearToteWhenSegmentJustProcessedOneTote : () ==> ()
-TestGetRearToteWhenSegmentJustProcessedOneTote() ==
-  (
-    segment.Process(tote1);
-    Assert`assertTrue(segment.GetRearTote().GetId() = tote1.GetId());
-  );
-
-public TestGetRearToteWhenSegmentHasOnlyOneTote : () ==> ()
-TestGetRearToteWhenSegmentHasOnlyOneTote() ==
-  (
-    segment.Process(tote1);
-    segment.Step();
-    Assert`assertTrue(segment.GetRearTote().GetId() = tote1.GetId());
-  );
-
-public TestGetRearToteWhenSegmentHasTwoTotes : () ==> ()
-TestGetRearToteWhenSegmentHasTwoTotes() ==
-  (
-    segment.Process(tote1);
-    segment.Step();
-    segment.Process(tote2);
-    Assert`assertTrue(segment.GetRearTote().GetId() = tote2.GetId());
-  );
-
 end SegmentTest

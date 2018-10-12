@@ -90,9 +90,4 @@ Step() ==
     -- 5) Change the position of all totes
   );
 
-public pure GetRearTote : () ==> Tote
-GetRearTote() ==
-  return totePositions(len totePositions).Tote
-pre len totePositions > 0;
-
 end Segment
