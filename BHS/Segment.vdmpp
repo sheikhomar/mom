@@ -1,5 +1,9 @@
 class Segment is subclass of Global
 
+values
+
+PositionChangePerStep = 10
+
 types
 
 TotePosition :: Tote : Tote
@@ -74,7 +78,7 @@ Step() ==
     for i = len totePositions to 1 by -1 do
       let
         tp = totePositions(i),
-        newPosition = tp.Position + tp.Tote.GetLength()
+        newPosition = tp.Position + PositionChangePerStep
       in
         totePositions(i) := mk_TotePosition(tp.Tote, newPosition);
 
