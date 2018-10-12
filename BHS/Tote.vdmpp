@@ -1,14 +1,19 @@
 class Tote
-types
--- TODO Define types here
-values
--- TODO Define values here
+
 instance variables
--- TODO Define instance variables here
+
+private id : nat;
+private length : nat1;
+
 operations
--- TODO Define operations here
-functions
--- TODO Define functiones here
-traces
--- TODO Define Combinatorial Test Traces here
+
+public Tote : nat * nat1 ==> Tote
+Tote(pId, pLength) == ( id := pId; length := pLength; );
+
+public pure GetId : () ==> nat
+GetId() == return id;
+
+public pure GetLength : () ==> nat1
+GetLength() == return length;
+
 end Tote
