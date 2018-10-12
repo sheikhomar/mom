@@ -1,11 +1,16 @@
 class Segment is subclass of Global
 
+types
+
+TotePosition :: Tote : Tote
+                Position : nat
+
 instance variables
 
 private source : Station;
 private target : Station;
 private distance : Distance;
-private totePositions : inmap Tote to nat;
+private totePositions : seq of TotePosition;
 
 operations
 
@@ -20,7 +25,7 @@ Segment(pSourceStation, pTargetStation, pDistance) ==
     source.AddSegment(self);
     target.AddSegment(self);
 
-    totePositions := { |-> };
+    totePositions := [];
   )
 -- Ensure that source and destination stations are different.
 pre pSourceStation.GetId() <> pTargetStation.GetId();
@@ -47,31 +52,31 @@ IsTarget(pStation) ==
 
 public pure CanProcess : Tote ==> bool
 CanProcess(pTote) ==
-  return card dom totePositions = 0 or
-    let rearTote    = GetRearTote(),
-        rearTotePos = totePositions(rearTote)
-    in
-        rearTotePos - rearTote.GetLength() >= pTote.GetLength();
+  return len totePositions = 0 or
+    let tp = totePositions(len totePositions)
+    in tp.Position - tp.Tote.GetLength() >= pTote.GetLength();
 
 public Process : Tote ==> ()
 Process(pTote) ==
   (
-    totePositions := totePositions munion { pTote |-> pTote.GetLength() };
+    let tp = mk_TotePosition(pTote, pTote.GetLength())
+    in totePositions := totePositions ^ [ tp ];
   )
 pre
   -- Ensure that the given tote is not already on the segment
-  forall tote in set dom totePositions & tote.GetId() <> pTote.GetId()
+  forall tp in seq totePositions & tp.Tote.GetId() <> pTote.GetId()
   -- And we can actually process the tote.
   and CanProcess(pTote);
 
 public Step : () ==> ()
 Step() ==
   (
-    for all tote in set dom totePositions
-    do
-      let newPosition = totePositions(tote) + tote.GetLength()
+    for i = len totePositions to 1 by -1 do
+      let
+        tp = totePositions(i),
+        newPosition = tp.Position + tp.Tote.GetLength()
       in
-        totePositions := totePositions ++ { tote |-> newPosition };
+        totePositions(i) := mk_TotePosition(tp.Tote, newPosition);
 
     -- TODO:
     -- 1) Find the next tote to process
@@ -83,12 +88,7 @@ Step() ==
 
 public pure GetRearTote : () ==> Tote
 GetRearTote() ==
-  let rearTotePos in set rng totePositions
-  be st
-    forall pos in set rng totePositions &
-    rearTotePos <> pos => rearTotePos < pos
-  in
-    return (inverse totePositions)(rearTotePos)
-pre card dom totePositions > 0;
+  return totePositions(len totePositions).Tote
+pre len totePositions > 0;
 
 end Segment
