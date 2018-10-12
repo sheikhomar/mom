@@ -1,10 +1,9 @@
 class DischargeStation is subclass of Station
-types
--- TODO Define types here
-values
--- TODO Define values here
+
 instance variables
--- TODO Define instance variables here
+
+private currentTote : [Tote] := nil;
+
 operations
 
 public DischargeStation : StationID * seq of char ==> DischargeStation
@@ -12,14 +11,11 @@ DischargeStation(pId, pName) ==
   Station(pId, pName);
 
 pure public CanProcess : () ==> bool
-CanProcess() ==
-  return true;
+CanProcess() == return currentTote = nil
+pre HasCorrectSegmentConfiguration(GetId(), segments);
 
 public Process : Tote ==> ()
-Process(tote) ==
-  (
-    skip;
-  );
+Process(pTote) == currentTote := pTote;
 
 public Step : () ==> ()
 Step() ==
@@ -28,7 +24,13 @@ Step() ==
   );
 
 functions
--- TODO Define functiones here
+
+private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
+HasCorrectSegmentConfiguration(pId, pSegments) ==
+   card pSegments > 0 and
+   forall segment in set pSegments & segment.GetTargetStation().GetId() = pId;
+
+
 traces
 -- TODO Define Combinatorial Test Traces here
 end DischargeStation

@@ -6,8 +6,8 @@ PositionChangePerStep = 10
 
 types
 
-TotePosition :: Tote : Tote
-                Position : nat
+public TotePosition :: Tote : Tote
+                       Position : nat
 
 instance variables
 
@@ -75,19 +75,47 @@ pre
 public Step : () ==> ()
 Step() ==
   (
-    for i = len totePositions to 1 by -1 do
-      let
-        tp = totePositions(i),
-        newPosition = tp.Position + PositionChangePerStep
-      in
-        totePositions(i) := mk_TotePosition(tp.Tote, newPosition);
-
-    -- TODO:
-    -- 1) Find the next tote to process
-    -- 2) If the target station can process the tote
-    -- 3)   Call TargetStation.Process(tote)
-    -- 4)   Remove tote from the segment
-    -- 5) Change the position of all totes
+    if
+      len totePositions > 0 -- We have totes on this segment
+      and totePositions(1).Position = distance -- The rear tote has reach the end of the segment
+      and target.CanProcess() -- The target station can process totes
+    then
+      let rear = totePositions(1)
+      in (
+          target.Process(rear.Tote);
+          totePositions := tl totePositions;
+        );
+    UpdateTotePositions(PositionChangePerStep);
   );
+
+public UpdateTotePositions : nat ==> ()
+UpdateTotePositions(positionDelta) ==
+  for i = 1 to len totePositions by 1
+  do
+    let tp = totePositions(i)
+    in
+      (
+        dcl newPosition : nat;
+        dcl maxPos : nat;
+
+        -- Compute the farthest position for this tote
+        if i <> 1
+        then
+          let nextTp = totePositions(i-1)
+          in maxPos := nextTp.Position - nextTp.Tote.GetLength()
+        else maxPos := distance;
+
+        -- Compute new position
+        if tp.Position + positionDelta > maxPos
+        then newPosition := maxPos
+        else newPosition := tp.Position + positionDelta;
+
+        -- Update new position
+        totePositions(i) := mk_TotePosition(tp.Tote, newPosition);
+      );
+
+-- Made for testing
+public pure GetTotePositions : () ==> seq of TotePosition
+GetTotePositions() == return totePositions;
 
 end Segment

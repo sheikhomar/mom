@@ -7,6 +7,8 @@ private target : Station;
 private segment : Segment;
 private tote1 : Tote;
 private tote2 : Tote;
+private tote3 : Tote;
+private tote4 : Tote;
 
 operations
 
@@ -15,9 +17,11 @@ setUp() ==
   (
     source := new CheckInStation(1, "Checkin");
     target := new DischargeStation(2, "Discharge");
-    segment := new Segment(source, target, 100);
+    segment := new Segment(source, target, 25);
     tote1 := new Tote(1455, 10);
     tote2 := new Tote(7375, 10);
+    tote3 := new Tote(5432, 10);
+    tote4 := new Tote(4242, 10);
   );
 
 
@@ -37,6 +41,89 @@ TestCanProcessWhenRearToteIsInTheWay() ==
   (
     segment.Process(tote1);
     Assert`assertFalse(segment.CanProcess(tote2));
+  );
+
+
+/*
+ * Tests for Segment.UpdateTotePositions(nat)
+ */
+
+public TestUpdateTotePositionsWhenPositionChangeIsWithinSegmentDistance : () ==> ()
+TestUpdateTotePositionsWhenPositionChangeIsWithinSegmentDistance() ==
+  (
+    segment.Process(tote1);
+    segment.UpdateTotePositions(10);
+    let newPos = segment.GetTotePositions()(1).Position
+    in Assert`assertTrue(newPos = 20);
+  );
+
+public TestUpdateTotePositionsWhenPositionChangeLandsOnTheEdge : () ==> ()
+TestUpdateTotePositionsWhenPositionChangeLandsOnTheEdge() ==
+  (
+    segment.Process(tote1);
+    segment.UpdateTotePositions(15);
+    let newPos = segment.GetTotePositions()(1).Position
+    in Assert`assertTrue(newPos = 25);
+  );
+
+public TestUpdateTotePositionsWhenPositionChangeIsLargerThanSegmentDistance : () ==> ()
+TestUpdateTotePositionsWhenPositionChangeIsLargerThanSegmentDistance() ==
+  (
+    segment.Process(tote1);
+    segment.UpdateTotePositions(30);
+    let newPos = segment.GetTotePositions()(1).Position
+    in Assert`assertTrue(newPos = 25);
+  );
+
+public TestUpdateTotePositionsMultipleUpdates : () ==> ()
+TestUpdateTotePositionsMultipleUpdates() ==
+  (
+    segment.Process(tote1);
+    segment.UpdateTotePositions(5);
+    segment.UpdateTotePositions(5);
+    let newPos = segment.GetTotePositions()(1).Position
+    in Assert`assertTrue(newPos = 20);
+  );
+
+public TestUpdateTotePositionsMultipleTotes : () ==> ()
+TestUpdateTotePositionsMultipleTotes() ==
+  (
+    segment.Process(tote1);
+    segment.UpdateTotePositions(10);
+    segment.Process(tote2);
+    segment.UpdateTotePositions(10);
+    let tote1Pos = segment.GetTotePositions()(1).Position
+    in Assert`assertTrue(tote1Pos = 25);
+    let tote2Pos = segment.GetTotePositions()(2).Position
+    in Assert`assertTrue(tote2Pos = 15);
+  );
+
+
+
+
+/*
+ * Tests for Segment.Step()
+ */
+public TestStep : () ==> ()
+TestStep() ==
+  (
+    Assert`assertTrue(segment.CanProcess(tote1));
+    segment.Process(tote1);
+    segment.Step();
+    Assert`assertTrue(target.CanProcess());
+    Assert`assertTrue(segment.CanProcess(tote2));
+    segment.Process(tote2);
+    segment.Step();
+    Assert`assertTrue(target.CanProcess());
+    Assert`assertFalse(segment.CanProcess(tote3));
+    segment.Step();
+    Assert`assertFalse(target.CanProcess());
+    Assert`assertTrue(segment.CanProcess(tote3));
+    segment.Process(tote3);
+    segment.Step();
+    Assert`assertFalse(segment.CanProcess(tote4));
+    segment.Step();
+    Assert`assertFalse(segment.CanProcess(tote4));
   );
 
 end SegmentTest

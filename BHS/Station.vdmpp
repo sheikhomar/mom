@@ -26,7 +26,7 @@ Station(pId, pName) ==
 pure public CanProcess : () ==> bool
 CanProcess() == is subclass responsibility;
 
-public Process : Tote ==> bool
+public Process : Tote ==> ()
 Process(tote) == is subclass responsibility
 pre CanProcess(); -- TODO: Are pre-conditions inherited?
 
