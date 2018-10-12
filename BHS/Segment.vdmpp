@@ -1,13 +1,11 @@
 class Segment is subclass of Global
-types
-
-values
 
 instance variables
 
 private source : Station;
 private target : Station;
 private distance : Distance;
+private totePositions : inmap Tote to nat;
 
 operations
 
@@ -21,6 +19,8 @@ Segment(pSourceStation, pTargetStation, pDistance) ==
     -- Back reference
     source.AddSegment(self);
     target.AddSegment(self);
+
+    totePositions := { |-> };
   )
 -- Ensure that source and destination stations are different.
 pre pSourceStation.GetId() <> pTargetStation.GetId();
@@ -45,45 +45,45 @@ public pure IsTarget : Station ==> bool
 IsTarget(pStation) ==
   return pStation.GetId() = target.GetId();
 
-public pure CanProcess : () ==> bool
-CanProcess() ==
-  -- TODO: Determine whether there is space on the segment
-  return true;
+public pure CanProcess : Tote ==> bool
+CanProcess(pTote) ==
+  return card dom totePositions = 0 or
+    let rearTote    = GetRearTote(),
+        rearTotePos = totePositions(rearTote)
+    in
+        rearTotePos - rearTote.GetLength() >= pTote.GetLength();
 
 public Process : Tote ==> ()
-Process(tote) ==
-  -- TODO: Add the tote to the segment with a position
-  skip;
+Process(pTote) ==
+  (
+    totePositions := totePositions munion { pTote |-> pTote.GetLength() };
+  );
 
 public Step : () ==> ()
 Step() ==
   (
+    for all tote in set dom totePositions
+    do
+      let newPosition = totePositions(tote) + tote.GetLength()
+      in
+        totePositions := totePositions ++ { tote |-> newPosition };
+
     -- TODO:
     -- 1) Find the next tote to process
     -- 2) If the target station can process the tote
     -- 3)   Call TargetStation.Process(tote)
     -- 4)   Remove tote from the segment
     -- 5) Change the position of all totes
-    skip
   );
 
+public pure GetRearTote : () ==> Tote
+GetRearTote() ==
+  let rearTotePos in set rng totePositions
+  be st
+    forall pos in set rng totePositions &
+    rearTotePos <> pos => rearTotePos < pos
+  in
+    return (inverse totePositions)(rearTotePos)
+pre card dom totePositions > 0;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-functions
--- TODO Define functiones here
-traces
--- TODO Define Combinatorial Test Traces here
 end Segment

@@ -1,0 +1,8 @@
+class AllTests
+
+operations
+
+public Run : () ==> ()
+Run() == new TestRunner().run();
+
+end AllTests

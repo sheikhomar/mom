@@ -1,0 +1,73 @@
+class SegmentTest is subclass of TestCase
+
+instance variables
+
+private source : Station;
+private target : Station;
+private segment : Segment;
+private tote1 : Tote;
+private tote2 : Tote;
+
+operations
+
+public setUp : () ==> ()
+setUp() ==
+  (
+    source := new CheckInStation(1, "Checkin");
+    target := new DischargeStation(2, "Discharge");
+    segment := new Segment(source, target, 100);
+    tote1 := new Tote(1455, 10);
+    tote2 := new Tote(7375, 12);
+  );
+
+
+/*
+ * Tests for Segment.CanProcess(Tote)
+ */
+
+public TestCanProcessWhenSegmentIsEmpty : () ==> ()
+TestCanProcessWhenSegmentIsEmpty() ==
+  (
+    Assert`assertTrue(segment.CanProcess(tote1));
+    Assert`assertTrue(segment.CanProcess(tote2));
+  );
+
+public TestCanProcessWhenRearToteIsInTheWay : () ==> ()
+TestCanProcessWhenRearToteIsInTheWay() ==
+  (
+    segment.Process(tote1);
+    Assert`assertFalse(segment.CanProcess(tote2));
+  );
+
+
+
+
+/*
+ * Tests for Segment.GetRearTote()
+ */
+
+public TestGetRearToteWhenSegmentJustProcessedOneTote : () ==> ()
+TestGetRearToteWhenSegmentJustProcessedOneTote() ==
+  (
+    segment.Process(tote1);
+    Assert`assertTrue(segment.GetRearTote().GetId() = tote1.GetId());
+  );
+
+public TestGetRearToteWhenSegmentHasOnlyOneTote : () ==> ()
+TestGetRearToteWhenSegmentHasOnlyOneTote() ==
+  (
+    segment.Process(tote1);
+    segment.Step();
+    Assert`assertTrue(segment.GetRearTote().GetId() = tote1.GetId());
+  );
+
+public TestGetRearToteWhenSegmentHasTwoTotes : () ==> ()
+TestGetRearToteWhenSegmentHasTwoTotes() ==
+  (
+    segment.Process(tote1);
+    segment.Step();
+    segment.Process(tote2);
+    Assert`assertTrue(segment.GetRearTote().GetId() = tote2.GetId());
+  );
+
+end SegmentTest

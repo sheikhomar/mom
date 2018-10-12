@@ -25,7 +25,7 @@ public Step : () ==> ()
 Step() ==
   let segment in set segments
   in
-    if currentTote <> nil and segment.CanProcess()
+    if currentTote <> nil and segment.CanProcess(currentTote)
     then (
       segment.Process(currentTote);
       currentTote := nil;

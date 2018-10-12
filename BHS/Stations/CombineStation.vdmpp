@@ -25,7 +25,7 @@ public Step : () ==> ()
 Step() ==
   (
     dcl outSegment : Segment := GetOutSegment();
-    if currentTote <> nil and outSegment.CanProcess()
+    if currentTote <> nil and outSegment.CanProcess(currentTote)
     then (
       outSegment.Process(currentTote);
       currentTote := nil; -- Clean up so we can process the next tote

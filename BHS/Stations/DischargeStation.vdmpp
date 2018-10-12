@@ -19,7 +19,13 @@ public Process : Tote ==> ()
 Process(tote) ==
   (
     skip;
-  )
+  );
+
+public Step : () ==> ()
+Step() ==
+  (
+    skip;
+  );
 
 functions
 -- TODO Define functiones here
