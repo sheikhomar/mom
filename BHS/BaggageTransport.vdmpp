@@ -105,6 +105,91 @@ Step() ==
     do segment.Step();
   );
 
+public ToJSON : () ==> seq of char
+ToJSON() ==
+  (
+    dcl data : seq of char := "";
+    dcl tote : [Tote] := nil;
+    data := data ^ "{ \"stations\": [";
+    data := data ^ ConvertStationsToJSON(rng stations);
+    data := data ^ "], \"segments\": [";
+    data := data ^ ConvertSegmentsToJSON(segments);
+    data := data ^ "]}";
+    return data;
+  );
+
+private pure ConvertSegmentsToJSON : set of Segment ==> seq of char
+ConvertSegmentsToJSON(pSegments) ==
+  (
+    dcl data : seq of char := "";
+    if pSegments <> {}
+    then (
+      let segment in set pSegments in
+      let
+        nextJson = ConvertSegmentsToJSON(pSegments \ { segment }),
+        source = segment.GetSourceStation(),
+        target = segment.GetTargetStation(),
+        distance = segment.GetDistance(),
+        totePositions = segment.GetTotePositions()
+      in (
+        data := data ^ "{ \"source\": \"" ^ source.GetName() ^ "\",";
+        data := data ^ " \"target\": \"" ^ target.GetName() ^ "\",";
+        data := data ^ " \"distance\": " ^ VDMUtil`val2seq_of_char[nat](distance) ^ ",";
+        data := data ^ " \"totes\": [";
+        data := data ^ ConvertTotePositionsToJSON(totePositions);
+        data := data ^ "]}";
+        if nextJson <> ""
+        then data := data ^ ", " ^ nextJson;
+      );
+    );
+    return data;
+  );
+
+private pure ConvertStationsToJSON : set of Station ==> seq of char
+ConvertStationsToJSON(pStations) ==
+  (
+    dcl data : seq of char := "";
+    if pStations <> {}
+    then (
+      let station in set pStations in
+      let
+        nextJson = ConvertStationsToJSON(pStations \ { station }),
+        tote = station.GetCurrentTote()
+      in (
+        data := data ^ "{ \"name\": \"" ^ station.GetName() ^ "\"";
+        data := data ^ ", \"totes\": [";
+        if tote <> nil
+        then data := data ^ " { \"id\": " ^ VDMUtil`val2seq_of_char[nat](tote.GetId()) ^ " }";
+        data := data ^ "]";
+        data := data ^ "}";
+
+        if nextJson <> ""
+        then data := data ^ ", " ^ nextJson;
+      );
+    );
+    return data;
+  );
+
+private pure ConvertTotePositionsToJSON : seq of Segment`TotePosition ==> seq of char
+ConvertTotePositionsToJSON(pTotePositions) ==
+  (
+    dcl data : seq of char := "";
+    if pTotePositions <> []
+    then (
+     let
+        totePos = pTotePositions(1),
+        nextJson = ConvertTotePositionsToJSON(tl pTotePositions),
+        toteId = VDMUtil`val2seq_of_char[nat](totePos.Tote.GetId()),
+        position = VDMUtil`val2seq_of_char[nat](totePos.Position)
+      in (
+        data := "{ \"id\": " ^ toteId ^ ", \"position\": " ^ position ^ "}";
+        if nextJson <> ""
+        then data := data ^ ", " ^ nextJson;
+      );
+    );
+    return data;
+  );
+
 public ToGraphViz : () ==> seq of char
 ToGraphViz() ==
   (
