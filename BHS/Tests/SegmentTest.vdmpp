@@ -26,6 +26,20 @@ setUp() ==
 
 
 /*
+ * Tests for the Constructor
+ */
+public TestCtorAssignsSegmentsToStations : () ==> ()
+TestCtorAssignsSegmentsToStations() ==
+  (
+    let s1 : Segment = new Segment(source, target, 25) in
+    (
+      Assert`assertTrue(s1.GetSourceStation().GetId() = source.GetId());
+      Assert`assertTrue(s1.GetTargetStation().GetId() = target.GetId());
+    )
+  );
+
+
+/*
  * Tests for Segment.CanProcess(Tote)
  */
 
