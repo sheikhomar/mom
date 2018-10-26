@@ -1,11 +1,4 @@
 class CombineStation is subclass of Station
-types
--- TODO Define types here
-values
--- TODO Define values here
-instance variables
-
-private currentTote : [Tote] := nil;
 
 operations
 
@@ -30,7 +23,8 @@ Step() ==
       outSegment.Process(currentTote);
       currentTote := nil; -- Clean up so we can process the next tote
     )
-  );
+  )
+pre EnsureCorrectSegmentConfiguration();
 
 
 

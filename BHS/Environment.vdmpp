@@ -1,27 +1,68 @@
 class Environment
-types
--- TODO Define types here
-values
--- TODO Define values here
+
 instance variables
 
 busy : bool := false;
+private transport : BaggageTransport;
 
 operations
 
 public Environment: () ==> Environment
 Environment () ==
-  busy := true;
+  (
+    busy := true;
+    transport := BaggageTransport`LoadSampleLayout1();
+  );
 
 
 public Run: () ==> ()
 Run () == 
-  busy := true;
+  (
+    dcl tote1 : Tote := new Tote(1, 10);
+    dcl tote2 : Tote := new Tote(2, 10);
+    dcl station : Station;
+    dcl retVal : bool;
+
+    IO`print("Initial config: \n\n");
+    station := transport.GetStation("CheckIn1");
+    station.Process(tote1);
+    IO`print(transport.ToGraphViz());
+    retVal := IO`fwriteval[seq of ?]("graphviz/step0.dot", transport.ToGraphViz(), <start>);
+    transport.Step();
+
+    IO`print("Step 1: \n\n");
+    station := transport.GetStation("CheckIn2");
+    station.Process(tote2);
+    IO`print(transport.ToGraphViz());
+    retVal := IO`fwriteval[seq of char]("graphviz/step1.dot", transport.ToGraphViz(), <start>);
+    transport.Step();
+
+    IO`print("Step 2: \n\n");
+    IO`print(transport.ToGraphViz());
+    retVal := IO`fwriteval[seq of char]("graphviz/step2.dot", transport.ToGraphViz(), <start>);
+    transport.Step();
+
+    IO`print("Step 3: \n\n");
+    IO`print(transport.ToGraphViz());
+    retVal := IO`fwriteval[seq of char]("graphviz/step3.dot", transport.ToGraphViz(), <start>);
+    transport.Step();
+
+    IO`print("Step 4: \n\n");
+    IO`print(transport.ToGraphViz());
+    retVal := IO`fwriteval[seq of char]("graphviz/step4.dot", transport.ToGraphViz(), <start>);
+    transport.Step();
+
+    IO`print("Step 5: \n\n");
+    IO`print(transport.ToGraphViz());
+    retVal := IO`fwriteval[seq of char]("graphviz/step5.dot", transport.ToGraphViz(), <start>);
+    transport.Step();
+
+    IO`print("Step 6: \n\n");
+    IO`print(transport.ToGraphViz());
+    retVal := IO`fwriteval[seq of char]("graphviz/step6.dot", transport.ToGraphViz(), <start>);
+    transport.Step();
+    busy := true;
+  );
 
 
-
-functions
--- TODO Define functiones here
-traces
--- TODO Define Combinatorial Test Traces here
 end Environment

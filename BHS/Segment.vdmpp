@@ -54,6 +54,11 @@ public pure IsTarget : Station ==> bool
 IsTarget(pStation) ==
   return pStation.GetId() = target.GetId();
 
+public pure GetDistance : () ==> Distance
+GetDistance() ==
+  return distance;
+
+
 public pure CanProcess : Tote ==> bool
 CanProcess(pTote) ==
   return len totePositions = 0 or

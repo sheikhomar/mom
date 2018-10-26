@@ -6,14 +6,12 @@ instance variables
 
 public static env : [Environment] := nil;
 public static timer : Timer := Timer`GetInstance();
-private transport : BaggageTransport;
 
 operations
 
 public World: () ==> World
 World () ==
   (
-    transport := BaggageTransport`LoadSampleLayout1();
     env := new Environment();
   );
 
@@ -22,7 +20,7 @@ Run () ==
   (
     IO`print("Running the world!\n");
     env.Run();
-    IO`print("World done!\n");
+    IO`print("World finished!\n");
   );
 
 end World

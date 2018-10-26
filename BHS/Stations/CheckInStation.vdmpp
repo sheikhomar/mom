@@ -1,11 +1,4 @@
 class CheckInStation is subclass of Station
-types
--- TODO Define types here
-values
--- TODO Define values here
-instance variables
-
-private currentTote : [Tote] := nil;
 
 operations
 

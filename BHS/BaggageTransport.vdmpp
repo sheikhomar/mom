@@ -13,18 +13,20 @@ public SampleLayout1 : TransportLayout = mk_(
   [
     new CheckInStation(mk_token(1), "CheckIn1"),
     new CheckInStation(mk_token(2), "CheckIn2"),
-    new CombineStation(mk_token(3), "Combiner1")
+    new CombineStation(mk_token(3), "Combiner1"),
+    new DischargeStation(mk_token(4), "Discharge1")
   ],
   [
-    [0, 0, 30],
-    [0, 0, 20],
-    [0, 0,  0]
+    [ 0,  0, 30,  0],
+    [ 0,  0, 20,  0],
+    [ 0,  0,  0, 30],
+    [ 0,  0,  0,  0]
   ]
 )
 
 instance variables
 
-private stations : map Station`StationID to Station;
+private stations : map seq of char to Station;
 private segments : set of Segment;
 
 
@@ -73,10 +75,14 @@ Load(layout) ==
   );
 
 
+public GetStation : seq of char ==> Station
+GetStation(pStationName) ==
+  return stations(pStationName);
+
 public AddStation : Station ==> ()
 AddStation(pStation) ==
   (
-    stations := stations munion { pStation.GetId() |-> pStation };
+    stations := stations munion { pStation.GetName() |-> pStation };
   );
 -- TODO: Precondition, ensure that station id does not exit
 

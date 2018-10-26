@@ -11,6 +11,7 @@ instance variables
 private name : seq1 of char;
 private id : StationID;
 protected segments : set of Segment;
+protected currentTote : [Tote] := nil;
 
 operations
 
@@ -43,7 +44,9 @@ public AddSegment : Segment ==> ()
 AddSegment(pSegment) == segments := segments union { pSegment }
 pre pSegment.HasStation(self);
 
-
+public pure GetCurrentTote : () ==> [Tote]
+GetCurrentTote() ==
+  return currentTote;
 
 
 

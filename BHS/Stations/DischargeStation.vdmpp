@@ -1,9 +1,5 @@
 class DischargeStation is subclass of Station
 
-instance variables
-
-private currentTote : [Tote] := nil;
-
 operations
 
 public DischargeStation : StationID * seq of char ==> DischargeStation
