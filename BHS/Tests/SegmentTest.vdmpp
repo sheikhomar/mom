@@ -2,21 +2,21 @@ class SegmentTest is subclass of TestCase
 
 instance variables
 
-private source : Station;
-private target : Station;
-private segment : Segment;
-private tote1 : Tote;
-private tote2 : Tote;
-private tote3 : Tote;
-private tote4 : Tote;
+private source : [Station] := nil;
+private target : [Station] := nil;
+private segment : [Segment] := nil;
+private tote1 : [Tote] := nil;
+private tote2 : [Tote] := nil;
+private tote3 : [Tote] := nil;
+private tote4 : [Tote] := nil;
 
 operations
 
 public setUp : () ==> ()
 setUp() ==
   (
-    source := new CheckInStation(1, "Checkin");
-    target := new DischargeStation(2, "Discharge");
+    source := new CheckInStation(mk_token(1), "Checkin");
+    target := new DischargeStation(mk_token(2), "Discharge");
     segment := new Segment(source, target, 25);
     tote1 := new Tote(1455, 10);
     tote2 := new Tote(7375, 10);

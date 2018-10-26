@@ -11,9 +11,9 @@ values
 
 public SampleLayout1 : TransportLayout = mk_(
   [
-    new CheckInStation(1, "CheckIn1"),
-    new CheckInStation(2, "CheckIn2"),
-    new CombineStation(3, "Combiner1")
+    new CheckInStation(mk_token(1), "CheckIn1"),
+    new CheckInStation(mk_token(2), "CheckIn2"),
+    new CombineStation(mk_token(3), "Combiner1")
   ],
   [
     [0, 0, 30],
@@ -24,7 +24,7 @@ public SampleLayout1 : TransportLayout = mk_(
 
 instance variables
 
-private stations : map nat to Station;
+private stations : map Station`StationID to Station;
 private segments : set of Segment;
 
 
