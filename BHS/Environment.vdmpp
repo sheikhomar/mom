@@ -17,51 +17,51 @@ Environment () ==
 
 public Run: () ==> ()
 Run () == 
-  (
-    dcl tote1 : Tote := new Tote(1, 10);
-    dcl tote2 : Tote := new Tote(2, 10);
+  let 
+    tote1 = new Tote(1, 10),
+    tote2 = new Tote(2, 10)
+  in (
     dcl station : Station;
     dcl retVal : bool;
+    dcl output : seq of char;
+    output := "[";
 
     IO`print("Initial config: \n\n");
     station := transport.GetStation("CheckIn1");
     station.Process(tote1);
-    IO`print(transport.ToGraphViz());
-    retVal := IO`fwriteval[seq of ?]("graphviz/step0.dot", transport.ToGraphViz(), <start>);
+    output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
-
+--
     IO`print("Step 1: \n\n");
     station := transport.GetStation("CheckIn2");
     station.Process(tote2);
-    IO`print(transport.ToGraphViz());
-    retVal := IO`fwriteval[seq of char]("graphviz/step1.dot", transport.ToGraphViz(), <start>);
+    output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
     IO`print("Step 2: \n\n");
-    IO`print(transport.ToGraphViz());
-    retVal := IO`fwriteval[seq of char]("graphviz/step2.dot", transport.ToGraphViz(), <start>);
+    output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
     IO`print("Step 3: \n\n");
-    IO`print(transport.ToGraphViz());
-    retVal := IO`fwriteval[seq of char]("graphviz/step3.dot", transport.ToGraphViz(), <start>);
+    output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
     IO`print("Step 4: \n\n");
-    IO`print(transport.ToGraphViz());
-    retVal := IO`fwriteval[seq of char]("graphviz/step4.dot", transport.ToGraphViz(), <start>);
+    output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
     IO`print("Step 5: \n\n");
-    IO`print(transport.ToGraphViz());
-    retVal := IO`fwriteval[seq of char]("graphviz/step5.dot", transport.ToGraphViz(), <start>);
+    output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
     IO`print("Step 6: \n\n");
-    IO`print(transport.ToGraphViz());
-    retVal := IO`fwriteval[seq of char]("graphviz/step6.dot", transport.ToGraphViz(), <start>);
+    output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
-    busy := true;
+
+    output := output ^ " { } ";
+    output := output ^ "]";
+    IO`print(output);
+    retVal := IO`fwriteval[seq of char]("generated/simulation.json", output, <start>);
   );
 
 
