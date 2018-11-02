@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 import json
 import pydot
+import glob
+from PIL import Image
+
 
 def load_config():
     with open('generated/simulation.json', 'r') as f:
@@ -33,10 +36,24 @@ def generate_segment(graph, segment):
     return edge
 
 
-def main():
-    config = load_config()
+def concat_images(file_pattern='generated/simulation_graph_*.png'):
+    image_paths = sorted(glob.glob(file_pattern))
+    images = list(map(Image.open, image_paths))
+    widths, heights = zip(*(i.size for i in images))
 
-    for index, run in enumerate(config):
+    new_width = max(widths)
+    new_height = sum(heights)
+    new_img = Image.new(images[0].mode, (new_width, new_height))
+
+    y_offset = 0
+    for img in images:
+        new_img.paste(img, (0, y_offset))
+        y_offset += img.size[1] + 2
+    new_img.save('generated/done.png')
+
+
+def generate_graphs(simulation_data):
+    for index, run in enumerate(simulation_data):
         if 'stations' in run:
             graph = pydot.Dot(graph_type='digraph', rankdir='LR')
             graph.set('autosize', 'false')
@@ -49,6 +66,13 @@ def main():
                 graph.add_edge(edge)
             graph.write('generated/simulation_graph_{}.png'.format(index), format='png')
             graph.write('generated/simulation_graph_{}.xdot'.format(index))
+
+
+def main():
+    simulation_data = load_config()
+    generate_graphs(simulation_data)
+    concat_images()
+    print('Done!')
 
 
 if __name__ == '__main__':

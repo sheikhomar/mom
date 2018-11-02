@@ -57,3 +57,6 @@ local.properties
 
 
 */**/generated
+*/**/.idea
+.idea
+
