@@ -68,7 +68,7 @@ CanProcess(pTote) ==
 public Process : Tote ==> ()
 Process(pTote) ==
   (
-    let tp = mk_TotePosition(pTote, pTote.GetLength())
+    let tp = mk_TotePosition(pTote, 0)
     in totePositions := totePositions ^ [ tp ];
   )
 pre

@@ -17,7 +17,7 @@ public SampleLayout1 : TransportLayout = mk_(
     new DischargeStation(mk_token(4), "Discharge1")
   ],
   [
-    [ 0,  0, 30,  0],
+    [ 0,  0, 35,  0],
     [ 0,  0, 20,  0],
     [ 0,  0,  0, 30],
     [ 0,  0,  0,  0]

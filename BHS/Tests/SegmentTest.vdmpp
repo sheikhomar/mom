@@ -68,7 +68,7 @@ TestUpdateTotePositionsWhenPositionChangeIsWithinSegmentDistance() ==
     segment.Process(tote1);
     segment.UpdateTotePositions(10);
     let newPos = segment.GetTotePositions()(1).Position
-    in Assert`assertTrue(newPos = 20);
+    in Assert`assertTrue(newPos = 10);
   );
 
 public TestUpdateTotePositionsWhenPositionChangeLandsOnTheEdge : () ==> ()
@@ -77,7 +77,7 @@ TestUpdateTotePositionsWhenPositionChangeLandsOnTheEdge() ==
     segment.Process(tote1);
     segment.UpdateTotePositions(15);
     let newPos = segment.GetTotePositions()(1).Position
-    in Assert`assertTrue(newPos = 25);
+    in Assert`assertTrue(newPos = 15);
   );
 
 public TestUpdateTotePositionsWhenPositionChangeIsLargerThanSegmentDistance : () ==> ()
@@ -96,20 +96,20 @@ TestUpdateTotePositionsMultipleUpdates() ==
     segment.UpdateTotePositions(5);
     segment.UpdateTotePositions(5);
     let newPos = segment.GetTotePositions()(1).Position
-    in Assert`assertTrue(newPos = 20);
+    in Assert`assertTrue(newPos = 10);
   );
 
 public TestUpdateTotePositionsMultipleTotes : () ==> ()
 TestUpdateTotePositionsMultipleTotes() ==
   (
     segment.Process(tote1);
-    segment.UpdateTotePositions(10);
+    segment.UpdateTotePositions(20);
     segment.Process(tote2);
     segment.UpdateTotePositions(10);
     let tote1Pos = segment.GetTotePositions()(1).Position
     in Assert`assertTrue(tote1Pos = 25);
     let tote2Pos = segment.GetTotePositions()(2).Position
-    in Assert`assertTrue(tote2Pos = 15);
+    in Assert`assertTrue(tote2Pos = 10);
   );
 
 
@@ -125,18 +125,30 @@ TestStep() ==
     segment.Process(tote1);
     segment.Step();
     Assert`assertTrue(target.CanProcess());
+    Assert`assertFalse(segment.CanProcess(tote2));
+
+    segment.Step();
+    Assert`assertTrue(target.CanProcess());
     Assert`assertTrue(segment.CanProcess(tote2));
+
     segment.Process(tote2);
     segment.Step();
     Assert`assertTrue(target.CanProcess());
     Assert`assertFalse(segment.CanProcess(tote3));
+
     segment.Step();
     Assert`assertFalse(target.CanProcess());
     Assert`assertTrue(segment.CanProcess(tote3));
+
     segment.Process(tote3);
     segment.Step();
     Assert`assertFalse(segment.CanProcess(tote4));
     segment.Step();
+    Assert`assertFalse(segment.CanProcess(tote4));
+    segment.Step();
+    /* Segment is going to be full no matter how many times, we step it.
+     * The target station is not being stepped, so it holds onto Tote1.
+     */
     Assert`assertFalse(segment.CanProcess(tote4));
   );
 
