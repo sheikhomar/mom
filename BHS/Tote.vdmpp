@@ -1,9 +1,11 @@
+-- TODO: This call can be turned into a simple type.
 class Tote
 
 instance variables
 
 private id : nat;
 private length : nat1;
+private baggage : [Baggage] := nil;
 
 operations
 
@@ -15,5 +17,13 @@ GetId() == return id;
 
 public pure GetLength : () ==> nat1
 GetLength() == return length;
+
+public pure GetBaggage : () ==> [Baggage]
+GetBaggage() == return baggage;
+
+public Insert : Baggage ==> ()
+Insert(pBaggage) ==
+  baggage := pBaggage
+pre baggage = nil;
 
 end Tote

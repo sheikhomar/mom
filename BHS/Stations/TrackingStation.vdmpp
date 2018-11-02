@@ -1,0 +1,65 @@
+class TrackingStation is subclass of Station
+
+operations
+
+public TrackingStation : StationID * seq of char ==> TrackingStation
+TrackingStation(pId, pName) ==
+  Station(pId, pName);
+
+pure public CanProcess : () ==> bool
+CanProcess() == return currentTote = nil
+pre HasCorrectSegmentConfiguration(GetId(), segments);
+
+public Process : Tote ==> ()
+Process(pTote) == currentTote := pTote
+pre pTote.GetBaggage() <> nil;
+
+public Step : () ==> ()
+Step() ==
+  (
+    dcl nextSegment : Segment;
+    if currentTote <> nil and currentTote.GetBaggage().HasBadTag()
+    then nextSegment := FindSegmentToManualEncoding(segments)
+    else nextSegment := FindSegmentTowardsDischarge(GetId(), segments);
+    if currentTote <> nil and nextSegment.CanProcess(currentTote)
+    then nextSegment.Process(currentTote);
+    currentTote := nil;
+  )
+pre HasCorrectSegmentConfiguration(GetId(), segments);
+
+functions
+
+private FindSegmentToManualEncoding : set of Segment -> Segment
+FindSegmentToManualEncoding(pSegments) ==
+  let toManualEnc in set
+    { s | s in set pSegments &
+      isofclass(ManualEncodingStation, s.GetTargetStation())
+    }
+  in toManualEnc;
+
+private FindSegmentTowardsDischarge : StationID * set of Segment -> Segment
+FindSegmentTowardsDischarge(pTrackingStationId, pSegments) ==
+  let towardsDischarge in set
+    { s | s in set pSegments &
+      not s.IsTargetStation(pTrackingStationId) and
+      not isofclass(ManualEncodingStation, s.GetTargetStation())
+    }
+  in towardsDischarge;
+
+private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
+HasCorrectSegmentConfiguration(pCurrentid, pSegments) ==
+  let outSegments = { seg | seg in set pSegments & seg.IsSourceStation(pCurrentid) }
+  in
+    -- Ensure that there are at least 3 segments i.e., there must
+    -- be only 2 out segments and at least one in segment
+    card pSegments >= 3 and
+    -- Ensure that we only have 2 out segments
+    card outSegments = 2 and
+    -- And only one of the out segments goes to the manual encoding
+    exists outSegmentToManualEncoding in set outSegments &
+      isofclass(ManualEncodingStation, outSegmentToManualEncoding.GetTargetStation()) and
+      forall otherSegment in set outSegments &
+        otherSegment.GetId() <> outSegmentToManualEncoding.GetId() =>
+          not isofclass(ManualEncodingStation, otherSegment.GetTargetStation());
+
+end TrackingStation

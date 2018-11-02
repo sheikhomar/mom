@@ -1,0 +1,26 @@
+class ManualEncodingStation is subclass of Station
+
+operations
+
+public ManualEncodingStation : StationID * seq of char ==> ManualEncodingStation
+ManualEncodingStation(pId, pName) ==
+  Station(pId, pName);
+
+pure public CanProcess : () ==> bool
+CanProcess() == return currentTote = nil
+pre HasCorrectSegmentConfiguration(GetId(), segments);
+
+public Process : Tote ==> ()
+Process(pTote) == currentTote := pTote;
+
+public Step : () ==> ()
+Step() == skip;
+
+functions
+
+private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
+HasCorrectSegmentConfiguration(pCurrentid, pSegments) ==
+  true;
+
+
+end ManualEncodingStation

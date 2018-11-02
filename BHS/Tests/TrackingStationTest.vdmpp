@@ -1,0 +1,84 @@
+class TrackingStationTest is subclass of TestCase
+
+instance variables
+
+private trackingStation : [TrackingStation] := nil;
+private toDischarge : [Segment] := nil;
+private toManualEncoding : [Segment] := nil;
+private goodTote : [Tote] := nil;
+private faultyTote : [Tote] := nil;
+private someTote : [Tote] := nil;
+
+operations
+
+public setUp : () ==> ()
+setUp() ==
+  let
+    checkin = new CheckInStation(mk_token(1), "Checkin"),
+    tracking = new TrackingStation(mk_token(2), "Tracker"),
+    manual = new ManualEncodingStation(mk_token(3), "ManualEncoder"),
+    discharge = new DischargeStation(mk_token(4), "Discharge"),
+    inSeg1 =  new Segment(checkin, tracking, 25),
+    baggageWithGoodTag = new Baggage(),
+    baggageWithFaultyTag = new Baggage(true)
+  in (
+    goodTote := new Tote(1455, 10);
+    goodTote.Insert(baggageWithGoodTag);
+    faultyTote := new Tote(1456, 10);
+    faultyTote.Insert(baggageWithFaultyTag);
+    someTote := new Tote(1457, 10);
+    trackingStation := tracking;
+    toManualEncoding := new Segment(tracking, manual, 25);
+    toDischarge := new Segment(tracking, discharge, 25);
+  );
+
+/*
+ * Tests for CanProcess()
+ */
+public TestCanProcessWhenNothingIsBeingProcessing : () ==> ()
+TestCanProcessWhenNothingIsBeingProcessing() ==
+  (
+    Assert`assertTrue(trackingStation.CanProcess());
+  );
+
+public TestCanProcessWhenToteIsProcessing : () ==> ()
+TestCanProcessWhenToteIsProcessing() ==
+  (
+    trackingStation.Process(goodTote);
+    Assert`assertFalse(trackingStation.CanProcess());
+  );
+
+/*
+ * Tests for Step()
+ */
+public TestStepWhenNotProcessing : () ==> ()
+TestStepWhenNotProcessing() ==
+  (
+    -- Nothing should happen
+    trackingStation.Step();
+    Assert`assertTrue(trackingStation.CanProcess());
+  );
+
+public TestStepWhenProcessingGoodTote : () ==> ()
+TestStepWhenProcessingGoodTote() ==
+  (
+    trackingStation.Process(goodTote);
+    Assert`assertFalse(trackingStation.CanProcess());
+    trackingStation.Step();
+    Assert`assertTrue(trackingStation.CanProcess());
+    Assert`assertFalse(toDischarge.CanProcess(someTote));
+    Assert`assertTrue(toManualEncoding.CanProcess(someTote));
+  );
+
+public TestStepWhenProcessingFaultyTote : () ==> ()
+TestStepWhenProcessingFaultyTote() ==
+  (
+    trackingStation.Process(faultyTote);
+    Assert`assertFalse(trackingStation.CanProcess());
+    trackingStation.Step();
+    Assert`assertTrue(trackingStation.CanProcess());
+    Assert`assertTrue(toDischarge.CanProcess(someTote));
+    Assert`assertFalse(toManualEncoding.CanProcess(someTote));
+  );
+
+end TrackingStationTest

@@ -1,14 +1,18 @@
 class Baggage
-types
--- TODO Define types here
-values
--- TODO Define values here
+
 instance variables
--- TODO Define instance variables here
+
+hasBadTag : bool := false;
+
 operations
--- TODO Define operations here
-functions
--- TODO Define functiones here
-traces
--- TODO Define Combinatorial Test Traces here
+
+public Baggage : () ==> Baggage
+Baggage() == skip;
+
+public Baggage : bool ==> Baggage
+Baggage(pHasBadTag) == hasBadTag := pHasBadTag;
+
+public HasBadTag : () ==> bool
+HasBadTag() == return hasBadTag;
+
 end Baggage
