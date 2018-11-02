@@ -37,17 +37,17 @@ EnsureCorrectSegmentConfiguration() ==
 
 private pure FindInSegments : () ==> set of Segment
 FindInSegments() ==
-  return { seg | seg in set segments & seg.IsTarget(self) };
+  return { seg | seg in set segments & seg.IsTargetStation(self) };
 
 
 private pure FindOutSegments : () ==> set of Segment
 FindOutSegments() ==
-  return { seg | seg in set segments & seg.IsSource(self) };
+  return { seg | seg in set segments & seg.IsSourceStation(self) };
 
 
 private pure GetOutSegment : () ==> Segment
 GetOutSegment() ==
-  let segment in set segments be st segment.IsSource(self)
+  let segment in set segments be st segment.IsSourceStation(self)
   in return segment;
 
 

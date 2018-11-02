@@ -6,7 +6,6 @@ public CheckInStation : StationID * seq of char ==> CheckInStation
 CheckInStation(pId, pName) ==
   Station(pId, pName);
 
-
 pure public CanProcess : () ==> bool
 CanProcess() == return currentTote = nil
 pre HasCorrectSegmentConfiguration(GetId(), segments);
@@ -27,10 +26,8 @@ Step() ==
 functions
 
 private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
-HasCorrectSegmentConfiguration(pId, pSegments) ==
+HasCorrectSegmentConfiguration(pStationId, pSegments) ==
    card pSegments = 1 and
-   exists segment in set pSegments & segment.GetSourceStation().GetId() = pId;
+   exists segment in set pSegments & segment.IsSourceStation(pStationId);
 
-traces
--- TODO Define Combinatorial Test Traces here
 end CheckInStation

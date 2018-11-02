@@ -46,13 +46,21 @@ HasStation(pStation) ==
   return pStation.GetId() = source.GetId() or
          pStation.GetId() = target.GetId();
 
-public pure IsSource : Station ==> bool
-IsSource(pStation) ==
-  return pStation.GetId() = source.GetId();
+public pure IsSourceStation : Station ==> bool
+IsSourceStation(pStation) ==
+  return source.GetId() = pStation.GetId();
 
-public pure IsTarget : Station ==> bool
-IsTarget(pStation) ==
-  return pStation.GetId() = target.GetId();
+public pure IsSourceStation : Station`StationID ==> bool
+IsSourceStation(pStationID) ==
+  return source.GetId() = pStationID;
+
+public pure IsTargetStation : Station ==> bool
+IsTargetStation(pStation) ==
+  return target.GetId() = pStation.GetId();
+
+public pure IsTargetStation : Station`StationID ==> bool
+IsTargetStation(pStationId) ==
+  return target.GetId() = pStationId;
 
 public pure GetDistance : () ==> Distance
 GetDistance() ==
