@@ -1,0 +1,123 @@
+class ManualEncodingStationTest is subclass of TestCase
+
+instance variables
+
+private encoder : [ManualEncodingStation] := nil;
+private inSegment : [Segment] := nil;
+private outSegment : [Segment] := nil;
+private tote1 : [Tote] := nil;
+private tote2 : [Tote] := nil;
+
+operations
+
+public setUp : () ==> ()
+setUp() == SetUpObjectsForTest(3);
+
+private SetUpObjectsForTest : nat1 ==> ()
+SetUpObjectsForTest(pNumOfSteps) ==
+  let
+    checkIn = new CheckInStation(mk_token(1), "Checkin"),
+    discharge = new DischargeStation(mk_token(2), "Discharge")
+  in (
+    -- ManualEncoding requires 3 steps before it process
+    encoder := new ManualEncodingStation(mk_token(3), "ManuelEncoder", pNumOfSteps);
+    inSegment := new Segment(checkIn, encoder, 25);
+    outSegment := new Segment(encoder, discharge, 25);
+    tote1 := new Tote(1455, 10);
+    tote2 := new Tote(1456, 10);
+  );
+
+
+private StepAll : () ==> ()
+StepAll() ==
+  (
+    encoder.Step();
+    inSegment.Step();
+    outSegment.Step();
+  );
+
+/*
+ * Tests for CanProcess()
+ */
+public TestCanProcessWhenNothingIsBeingProcessing : () ==> ()
+TestCanProcessWhenNothingIsBeingProcessing() ==
+  (
+    Assert`assertTrue(encoder.CanProcess());
+  );
+
+public TestCanProcessWhenToteIsProcessing : () ==> ()
+TestCanProcessWhenToteIsProcessing() ==
+  (
+    Assert`assertTrue(encoder.CanProcess());
+    encoder.Process(tote1);
+    Assert`assertFalse(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote1));
+    Assert`assertTrue(outSegment.CanProcess(tote1));
+  );
+
+/*
+ * Tests for Step()
+ */
+public TestStepWhenNotProcessing : () ==> ()
+TestStepWhenNotProcessing() ==
+  (
+    StepAll();
+    Assert`assertTrue(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote1));
+    Assert`assertTrue(outSegment.CanProcess(tote1));
+  );
+
+
+public TestStepWhenProcessing : () ==> ()
+TestStepWhenProcessing() ==
+  (
+    encoder.Process(tote1);
+    StepAll();
+
+    -- Should only forward tote after the fourth step
+    Assert`assertFalse(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote2));
+    Assert`assertTrue(outSegment.CanProcess(tote2));
+
+    StepAll();
+    Assert`assertFalse(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote2));
+    Assert`assertTrue(outSegment.CanProcess(tote2));
+
+    StepAll();
+    Assert`assertFalse(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote2));
+    Assert`assertTrue(outSegment.CanProcess(tote2));
+
+    StepAll();
+    Assert`assertTrue(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote2));
+    Assert`assertFalse(outSegment.CanProcess(tote2));
+  );
+
+public TestStepWaitTwoStepsBeforeProcessing : () ==> ()
+TestStepWaitTwoStepsBeforeProcessing() ==
+  (
+    SetUpObjectsForTest(2);
+    encoder.Process(tote1);
+    StepAll();
+
+    -- Should only forward tote after the fourth step
+    Assert`assertFalse(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote2));
+    Assert`assertTrue(outSegment.CanProcess(tote2));
+
+    StepAll();
+    Assert`assertFalse(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote2));
+    Assert`assertTrue(outSegment.CanProcess(tote2));
+
+    StepAll();
+    Assert`assertTrue(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote2));
+    Assert`assertFalse(outSegment.CanProcess(tote2));
+  );
+
+
+
+end ManualEncodingStationTest

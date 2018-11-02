@@ -1,26 +1,73 @@
 class ManualEncodingStation is subclass of Station
 
+values
+
+DefaultNumberOfStepsForProcessing = 2
+
+instance variables
+
+numOfStepsForProcessing : nat1 := DefaultNumberOfStepsForProcessing;
+stepCounter : nat := 0;
+
 operations
+
+public ManualEncodingStation : StationID * seq of char * nat1 ==> ManualEncodingStation
+ManualEncodingStation(pId, pName, pNumSteps) ==
+  (
+    numOfStepsForProcessing := pNumSteps;
+    Station(pId, pName);
+  );
 
 public ManualEncodingStation : StationID * seq of char ==> ManualEncodingStation
 ManualEncodingStation(pId, pName) ==
-  Station(pId, pName);
+  ManualEncodingStation(pId, pName, DefaultNumberOfStepsForProcessing);
 
 pure public CanProcess : () ==> bool
 CanProcess() == return currentTote = nil
 pre HasCorrectSegmentConfiguration(GetId(), segments);
 
 public Process : Tote ==> ()
-Process(pTote) == currentTote := pTote;
+Process(pTote) ==
+  (
+    currentTote := pTote;
+    stepCounter := numOfStepsForProcessing;
+  );
 
 public Step : () ==> ()
-Step() == skip;
+Step() ==
+  (
+    if currentTote <> nil
+    then
+      if stepCounter <> 0
+      then
+        stepCounter := stepCounter - 1
+      else
+        let outSegment = FindOutSegment(GetId(), segments)
+        in
+          if outSegment.CanProcess(currentTote)
+          then
+            (
+              outSegment.Process(currentTote);
+              currentTote := nil;
+            );
+  );
 
 functions
 
+private FindOutSegment : Station`StationID * set of Segment -> Segment
+FindOutSegment(pCurrentStationId, pSegments) ==
+  let outSegment in set
+    { s | s in set pSegments & s.IsSourceStation(pCurrentStationId) }
+  in
+    outSegment;
+
 private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
-HasCorrectSegmentConfiguration(pCurrentid, pSegments) ==
-  true;
+HasCorrectSegmentConfiguration(pCurrentStationId, pSegments) ==
+  let outSegments =
+    { s | s in set pSegments & s.IsSourceStation(pCurrentStationId) }
+  in
+    card pSegments >= 2 and
+    card outSegments = 1;
 
 
 end ManualEncodingStation
