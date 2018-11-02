@@ -16,17 +16,16 @@ Process(pTote) == currentTote := pTote;
 public Step : () ==> ()
 Step() ==
   (
-    skip;
+    -- Assume that the dischage station can process one tote at each step.
+    currentTote := nil;
   );
 
 functions
 
 private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
 HasCorrectSegmentConfiguration(pId, pSegments) ==
+   -- There must at least be one "in" segment and no "out" segments
    card pSegments > 0 and
-   forall segment in set pSegments & segment.GetTargetStation().GetId() = pId;
+   forall segment in set pSegments & segment.IsTargetStation(pId);
 
-
-traces
--- TODO Define Combinatorial Test Traces here
 end DischargeStation

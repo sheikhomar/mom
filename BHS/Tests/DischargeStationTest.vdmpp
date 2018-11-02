@@ -1,0 +1,57 @@
+class DischargeStationTest is subclass of TestCase
+
+instance variables
+
+private dischageStation : [DischargeStation] := nil;
+private tote1 : [Tote] := nil;
+
+operations
+
+public setUp : () ==> ()
+setUp() ==
+  let
+    source = new CheckInStation(mk_token(1), "Checkin"),
+    target = new DischargeStation(mk_token(2), "Discharge"),
+    segment = new Segment(source, target, 25)
+  in (
+    dischageStation := target;
+    tote1 := new Tote(1455, 10);
+  );
+
+/*
+ * Tests for CanProcess()
+ */
+public TestCanProcessWhenNothingIsBeingProcessing : () ==> ()
+TestCanProcessWhenNothingIsBeingProcessing() ==
+  (
+    Assert`assertTrue(dischageStation.CanProcess());
+  );
+
+public TestCanProcessWhenToteIsProcessing : () ==> ()
+TestCanProcessWhenToteIsProcessing() ==
+  (
+    dischageStation.Process(tote1);
+    Assert`assertFalse(dischageStation.CanProcess());
+  );
+
+/*
+ * Tests for Step()
+ */
+public TestStepWhenNotProcessing : () ==> ()
+TestStepWhenNotProcessing() ==
+  (
+    -- Nothing should happen
+    dischageStation.Step();
+    Assert`assertTrue(dischageStation.CanProcess());
+  );
+
+public TestStepWhenProcessing : () ==> ()
+TestStepWhenProcessing() ==
+  (
+    dischageStation.Process(tote1);
+    Assert`assertFalse(dischageStation.CanProcess());
+    dischageStation.Step();
+    Assert`assertTrue(dischageStation.CanProcess());
+  );
+
+end DischargeStationTest
