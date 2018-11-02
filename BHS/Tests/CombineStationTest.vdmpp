@@ -1,0 +1,80 @@
+class CombineStationTest is subclass of TestCase
+
+instance variables
+
+private combineStation : [CombineStation] := nil;
+private inSegment1 : [Segment] := nil;
+private inSegment2 : [Segment] := nil;
+private outSegment : [Segment] := nil;
+private tote1 : [Tote] := nil;
+private tote2 : [Tote] := nil;
+
+operations
+
+public setUp : () ==> ()
+setUp() ==
+  let
+    checkIn1 = new CheckInStation(mk_token(1), "Checkin1"),
+    checkIn2 = new CheckInStation(mk_token(2), "Checkin2"),
+    discharge = new DischargeStation(mk_token(3), "Discharge"),
+    combiner = new CombineStation(mk_token(4), "Combiner"),
+    seg1 = new Segment(checkIn1, combiner, 25),
+    seg2 = new Segment(checkIn2, combiner, 25),
+    outSeg = new Segment(combiner, discharge, 25)
+  in (
+    combineStation := combiner;
+    inSegment1 := seg1;
+    inSegment2 := seg2;
+    outSegment := outSeg;
+    tote1 := new Tote(1455, 10);
+    tote2 := new Tote(1455, 10);
+  );
+
+/*
+ * Tests for CanProcess()
+ */
+public TestCanProcessWhenNothingIsBeingProcessing : () ==> ()
+TestCanProcessWhenNothingIsBeingProcessing() ==
+  (
+    Assert`assertTrue(combineStation.CanProcess());
+  );
+
+public TestCanProcessWhenToteIsProcessing : () ==> ()
+TestCanProcessWhenToteIsProcessing() ==
+  (
+    Assert`assertTrue(combineStation.CanProcess());
+    combineStation.Process(tote1);
+    Assert`assertFalse(combineStation.CanProcess());
+    Assert`assertTrue(inSegment1.CanProcess(tote1));
+    Assert`assertTrue(inSegment2.CanProcess(tote1));
+    Assert`assertTrue(outSegment.CanProcess(tote1));
+  );
+
+/*
+ * Tests for Step()
+ */
+public TestStepWhenNotProcessing : () ==> ()
+TestStepWhenNotProcessing() ==
+  (
+    combineStation.Step();
+    Assert`assertTrue(combineStation.CanProcess());
+    Assert`assertTrue(inSegment1.CanProcess(tote1));
+    Assert`assertTrue(inSegment2.CanProcess(tote1));
+    Assert`assertTrue(outSegment.CanProcess(tote1));
+  );
+
+
+public TestStepWhenProcessing : () ==> ()
+TestStepWhenProcessing() ==
+  (
+    combineStation.Process(tote1);
+    combineStation.Step();
+    -- Should send the tote to the outSegment only!
+    Assert`assertFalse(outSegment.CanProcess(tote2));
+    Assert`assertTrue(combineStation.CanProcess());
+    Assert`assertTrue(inSegment1.CanProcess(tote1));
+    Assert`assertTrue(inSegment2.CanProcess(tote1));
+  );
+
+
+end CombineStationTest

@@ -9,7 +9,8 @@ CombineStation(pId, pName) ==
 
 public pure CanProcess : () ==> bool
 CanProcess() == return currentTote = nil
-pre EnsureCorrectSegmentConfiguration();
+pre HasCorrectSegmentConfiguration(GetId(), segments);
+--pre EnsureCorrectSegmentConfiguration(); // TODO Document this!
 
 public Process : Tote ==> ()
 Process(pTote) == currentTote := pTote;
@@ -24,9 +25,8 @@ Step() ==
       currentTote := nil; -- Clean up so we can process the next tote
     )
   )
-pre EnsureCorrectSegmentConfiguration();
-
-
+pre HasCorrectSegmentConfiguration(GetId(), segments);
+--pre EnsureCorrectSegmentConfiguration();
 
 private pure EnsureCorrectSegmentConfiguration: () ==> bool
 EnsureCorrectSegmentConfiguration() ==
@@ -57,12 +57,20 @@ private HasCorrectSegmentConfiguration: StationID * set of Segment -> bool
 HasCorrectSegmentConfiguration(id, segments) ==
   -- TODO: Why the warning "Pure operation call may not be referentially transparent"
   -- There must be at least one "in" segment and only one "out" segment
-  exists segment in set segments & segment.GetSourceStation().GetId()=id and
-  exists s1 in set segments &
-    forall s2 in set segments &
-      s1 <> s2 =>
-        s1.GetTargetStation().GetId() = id and
-        s2.GetTargetStation().GetId() <> id;
+  HasAtLeastOneInSegment(id, segments) and HasOnlyOneOutSegment(id, segments);
+
+private HasOnlyOneOutSegment: StationID * set of Segment -> bool
+HasOnlyOneOutSegment(pCurrentStationId, pAssociatedSegments) ==
+  exists outSegment in set pAssociatedSegments &
+    outSegment.IsSourceStation(pCurrentStationId) and
+    forall otherSegment in set pAssociatedSegments &
+      otherSegment.GetId() <> outSegment.GetId() =>
+        not otherSegment.IsSourceStation(pCurrentStationId);
+
+private HasAtLeastOneInSegment: StationID * set of Segment -> bool
+HasAtLeastOneInSegment(pCurrentStationId, pAssociatedSegments) ==
+  exists inSegment in set pAssociatedSegments &
+    inSegment.IsTargetStation(pCurrentStationId);
 
 traces
 -- TODO Define Combinatorial Test Traces here

@@ -11,6 +11,7 @@ public TotePosition :: Tote : Tote
 
 instance variables
 
+private id : token;
 private source : Station;
 private target : Station;
 private distance : Distance;
@@ -24,6 +25,7 @@ Segment(pSourceStation, pTargetStation, pDistance) ==
     source := pSourceStation;
     target := pTargetStation;
     distance := pDistance;
+    id := mk_token([ source.GetId(), target.GetId(), distance ]);
 
     -- Back reference
     source.AddSegment(self);
@@ -63,8 +65,10 @@ IsTargetStation(pStationId) ==
   return target.GetId() = pStationId;
 
 public pure GetDistance : () ==> Distance
-GetDistance() ==
-  return distance;
+GetDistance() == return distance;
+
+public pure GetId : () ==> token
+GetId() == return id;
 
 
 public pure CanProcess : Tote ==> bool
