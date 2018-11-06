@@ -14,13 +14,17 @@ public SampleLayout1 : TransportLayout = mk_(
     new CheckInStation(mk_token(1), "CheckIn1"),
     new CheckInStation(mk_token(2), "CheckIn2"),
     new CombineStation(mk_token(3), "Combiner1"),
-    new DischargeStation(mk_token(4), "Discharge1")
+    new TrackingStation(mk_token(4), "Tracker1"),
+    new ManualEncodingStation(mk_token(5), "ManualEncoder1"),
+    new DischargeStation(mk_token(6), "Discharge1")
   ],
   [
-    [ 0,  0, 35,  0],
-    [ 0,  0, 20,  0],
-    [ 0,  0,  0, 30],
-    [ 0,  0,  0,  0]
+    [ 0,  0, 35,  0,  0,  0], -- CheckIn1
+    [ 0,  0, 20,  0,  0,  0], -- CheckIn2
+    [ 0,  0,  0, 30,  0,  0], -- Combiner1
+    [ 0,  0,  0,  0, 40, 20], -- Tracker1
+    [ 0,  0,  0,  0,  0, 20], -- ManualEncoder1
+    [ 0,  0,  0,  0,  0,  0]  -- Discharge1
   ]
 )
 

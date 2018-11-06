@@ -16,52 +16,42 @@ Environment () ==
 
 
 public Run: () ==> ()
-Run () == 
+Run () ==
   let 
     tote1 = new Tote(1, 10),
-    tote2 = new Tote(2, 10)
+    tote2 = new Tote(2, 10),
+    baggage1 = new Baggage(false),
+    baggage2 = new Baggage(true)
   in (
     dcl station : Station;
-    dcl retVal : bool;
-    dcl output : seq of char;
-    output := "[";
+    dcl output : seq of char := "[";
+
+    tote1.Insert(baggage1);
+    tote2.Insert(baggage2);
 
     IO`print("Initial config: \n\n");
     station := transport.GetStation("CheckIn1");
     station.Process(tote1);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
---
-    IO`print("Step 1: \n\n");
+
     station := transport.GetStation("CheckIn2");
     station.Process(tote2);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
-    IO`print("Step 2: \n\n");
-    output := output ^ transport.ToJSON() ^ ", ";
-    transport.Step();
-
-    IO`print("Step 3: \n\n");
-    output := output ^ transport.ToJSON() ^ ", ";
-    transport.Step();
-
-    IO`print("Step 4: \n\n");
-    output := output ^ transport.ToJSON() ^ ", ";
-    transport.Step();
-
-    IO`print("Step 5: \n\n");
-    output := output ^ transport.ToJSON() ^ ", ";
-    transport.Step();
-
-    IO`print("Step 6: \n\n");
-    output := output ^ transport.ToJSON() ^ ", ";
-    transport.Step();
+    for i = 1 to 20 by 1 do
+    (
+      IO`print("Stepping... \n");
+      output := output ^ transport.ToJSON() ^ ", ";
+      transport.Step();
+    );
 
     output := output ^ " { } ";
     output := output ^ "]";
     IO`print(output);
-    retVal := IO`fwriteval[seq of char]("generated/simulation.json", output, <start>);
+    let - = IO`fwriteval[seq of char]("generated/simulation.json", output, <start>)
+    in skip;
   );
 
 
