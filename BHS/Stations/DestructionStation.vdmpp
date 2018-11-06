@@ -1,0 +1,31 @@
+class DestructionStation is subclass of Station
+
+operations
+
+public DestructionStation : StationID * seq of char ==> DestructionStation
+DestructionStation(pId, pName) ==
+  Station(pId, pName);
+
+pure public CanProcess : () ==> bool
+CanProcess() == return currentTote = nil
+pre HasCorrectSegmentConfiguration(GetId(), segments);
+
+public Process : Tote ==> ()
+Process(pTote) == currentTote := pTote
+pre pTote.GetBaggage() <> nil;
+
+public Step : () ==> ()
+Step() ==
+  (
+    skip;
+  );
+
+functions
+
+
+private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
+HasCorrectSegmentConfiguration(pCurrentId, pSegments) ==
+  true;
+
+
+end DestructionStation

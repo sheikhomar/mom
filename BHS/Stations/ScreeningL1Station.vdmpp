@@ -1,0 +1,30 @@
+class ScreeningL1Station is subclass of Station
+
+operations
+
+public ScreeningL1Station : StationID * seq of char ==> ScreeningL1Station
+ScreeningL1Station(pId, pName) ==
+  Station(pId, pName);
+
+pure public CanProcess : () ==> bool
+CanProcess() == return currentTote = nil
+pre HasCorrectSegmentConfiguration(GetId(), segments);
+
+public Process : Tote ==> ()
+Process(pTote) == currentTote := pTote
+pre pTote.GetBaggage() <> nil;
+
+public Step : () ==> ()
+Step() ==
+  (
+    skip;
+  );
+
+functions
+
+
+private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
+HasCorrectSegmentConfiguration(pCurrentId, pSegments) ==
+  true;
+
+end ScreeningL1Station

@@ -1,4 +1,4 @@
-class Baggage
+class Baggage is subclass of Global
 
 instance variables
 

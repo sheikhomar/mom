@@ -5,6 +5,10 @@ types
 
 public Distance = nat1; -- Unit: cm
 
+public BaggageAttribute = <BadTag> | <FailsSecurityL1>;
+
+
+
 values
 -- TODO Define values here
 instance variables
