@@ -1,0 +1,70 @@
+-- Represents a station with a fork in the track
+class ForkStation is subclass of Station
+
+operations
+
+public ForkStation : StationID * seq of char ==> ForkStation
+ForkStation(pId, pName) ==
+  Station(pId, pName);
+
+pure public CanProcess : () ==> bool
+CanProcess() == return currentTote = nil
+pre HasCorrectConfig();
+
+public Process : Tote ==> ()
+Process(pTote) == currentTote := pTote
+pre pTote.GetBaggage() <> nil;
+
+public Step : () ==> ()
+Step() ==
+  (
+    if currentTote <> nil
+    then
+      (
+        dcl nextSegment : Segment;
+
+        -- Determine which segment to pick of the fork
+        if CanGoTowardsDischarge(currentTote)
+        then nextSegment := FindDischargeSegment(GetId(), segments)
+        else nextSegment := FindOtherSegment(GetId(), segments);
+
+        -- Check if the segment can process
+        if nextSegment.CanProcess(currentTote)
+        then (
+          nextSegment.Process(currentTote);
+          currentTote := nil;
+        )
+      )
+  )
+pre HasCorrectConfig();
+
+pure protected HasCorrectConfig : () ==> bool
+HasCorrectConfig() == is subclass responsibility;
+
+pure protected CanGoTowardsDischarge : Tote ==> bool
+CanGoTowardsDischarge(-) == is subclass responsibility;
+
+pure protected IsTowardsDischage : Station ==> bool
+IsTowardsDischage(-) == is subclass responsibility;
+
+pure private FindOtherSegment : StationID * set of Segment ==> Segment
+FindOtherSegment(pCurrentStationId, pSegments) ==
+  return let towardsOther in set
+    { segment | segment in set pSegments &
+      -- Ignore incoming segments
+      not segment.IsTargetStation(pCurrentStationId) and
+      not IsTowardsDischage(segment.GetTargetStation())
+    }
+  in towardsOther;
+
+pure private FindDischargeSegment : StationID * set of Segment ==> Segment
+FindDischargeSegment(pCurrentStationId, pSegments) ==
+  return let towardsDischarge in set
+    { segment | segment in set pSegments &
+      -- Ignore incoming segments
+      not segment.IsTargetStation(pCurrentStationId) and
+      IsTowardsDischage(segment.GetTargetStation())
+    }
+  in towardsDischarge;
+
+end ForkStation

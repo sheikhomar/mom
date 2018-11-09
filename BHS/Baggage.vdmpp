@@ -22,7 +22,7 @@ SetAttr(pAttr) ==
   attributes := attributes union { pAttr }
 pre not pAttr in set attributes;
 
-public HasAttr : Attribute ==> bool
+pure public HasAttr : Attribute ==> bool
 HasAttr(pAttr) ==
   return pAttr in set attributes;
 

@@ -1,50 +1,24 @@
-class TrackingStation is subclass of Station
+class TrackingStation is subclass of ForkStation
 
 operations
 
 public TrackingStation : StationID * seq of char ==> TrackingStation
 TrackingStation(pId, pName) ==
-  Station(pId, pName);
+  ForkStation(pId, pName);
 
-pure public CanProcess : () ==> bool
-CanProcess() == return currentTote = nil
-pre HasCorrectSegmentConfiguration(GetId(), segments);
+pure protected HasCorrectConfig : () ==> bool
+HasCorrectConfig() ==
+  return HasCorrectSegmentConfiguration(GetId(), segments);
 
-public Process : Tote ==> ()
-Process(pTote) == currentTote := pTote
-pre pTote.GetBaggage() <> nil;
+pure protected CanGoTowardsDischarge : Tote ==> bool
+CanGoTowardsDischarge(pTote) ==
+  return not pTote.GetBaggage().HasAttr(<BadTag>);
 
-public Step : () ==> ()
-Step() ==
-  (
-    dcl nextSegment : Segment;
-    if currentTote <> nil and currentTote.GetBaggage().HasAttr(<BadTag>)
-    then nextSegment := FindSegmentToManualEncoding(segments)
-    else nextSegment := FindSegmentTowardsDischarge(GetId(), segments);
-    if currentTote <> nil and nextSegment.CanProcess(currentTote)
-    then (nextSegment.Process(currentTote);
-    currentTote := nil;)
-  )
-pre HasCorrectSegmentConfiguration(GetId(), segments);
+pure protected IsTowardsDischage : Station ==> bool
+IsTowardsDischage(pStation) ==
+  return not isofclass(ManualEncodingStation, pStation);
 
 functions
-
-private FindSegmentToManualEncoding : set of Segment -> Segment
-FindSegmentToManualEncoding(pSegments) ==
-  let toManualEnc in set
-    { s | s in set pSegments &
-      isofclass(ManualEncodingStation, s.GetTargetStation())
-    }
-  in toManualEnc;
-
-private FindSegmentTowardsDischarge : StationID * set of Segment -> Segment
-FindSegmentTowardsDischarge(pTrackingStationId, pSegments) ==
-  let towardsDischarge in set
-    { s | s in set pSegments &
-      not s.IsTargetStation(pTrackingStationId) and
-      not isofclass(ManualEncodingStation, s.GetTargetStation())
-    }
-  in towardsDischarge;
 
 private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
 HasCorrectSegmentConfiguration(pCurrentid, pSegments) ==
