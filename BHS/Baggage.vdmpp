@@ -26,4 +26,9 @@ public HasAttr : Attribute ==> bool
 HasAttr(pAttr) ==
   return pAttr in set attributes;
 
+public RemoveAttr : Attribute ==> ()
+RemoveAttr(pAttr) ==
+  attributes := attributes \ { pAttr }
+pre pAttr in set attributes;
+
 end Baggage

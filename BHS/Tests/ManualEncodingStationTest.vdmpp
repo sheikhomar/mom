@@ -7,6 +7,7 @@ private inSegment : [Segment] := nil;
 private outSegment : [Segment] := nil;
 private tote1 : [Tote] := nil;
 private tote2 : [Tote] := nil;
+private baggageWithFaultyTag : [Baggage] := nil;
 
 operations
 
@@ -17,7 +18,8 @@ private SetUpObjectsForTest : nat1 ==> ()
 SetUpObjectsForTest(pNumOfSteps) ==
   let
     checkIn = new CheckInStation(mk_token(1), "Checkin"),
-    discharge = new DischargeStation(mk_token(2), "Discharge")
+    discharge = new DischargeStation(mk_token(2), "Discharge"),
+    normalBaggage = new Baggage()
   in (
     -- ManualEncoding requires 3 steps before it process
     encoder := new ManualEncodingStation(mk_token(3), "ManuelEncoder", pNumOfSteps);
@@ -25,6 +27,9 @@ SetUpObjectsForTest(pNumOfSteps) ==
     outSegment := new Segment(encoder, discharge, 25);
     tote1 := new Tote(1455, 10);
     tote2 := new Tote(1456, 10);
+    baggageWithFaultyTag := new Baggage({<BadTag>});
+    tote1.Insert(baggageWithFaultyTag);
+    tote2.Insert(baggageWithFaultyTag);
   );
 
 
@@ -118,6 +123,27 @@ TestStepWaitTwoStepsBeforeProcessing() ==
     Assert`assertFalse(outSegment.CanProcess(tote2));
   );
 
+public TestStepRemovesBagTagAttribute : () ==> ()
+TestStepRemovesBagTagAttribute() ==
+  (
+    SetUpObjectsForTest(1); -- Process with no delay
+    encoder.Process(tote1);
+    StepAll();
 
+    Assert`assertFalse(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote2));
+    Assert`assertTrue(outSegment.CanProcess(tote2));
+
+    Assert`assertTrue(baggageWithFaultyTag.HasAttr(<BadTag>));
+
+    StepAll();
+    Assert`assertTrue(encoder.CanProcess());
+    Assert`assertTrue(inSegment.CanProcess(tote2));
+    Assert`assertFalse(outSegment.CanProcess(tote2));
+    -- Once the station has forwarded the baggage, it should remove
+    -- the BadTag attribute from the baggage.
+    Assert`assertFalse(baggageWithFaultyTag.HasAttr(<BadTag>));
+
+  );
 
 end ManualEncodingStationTest

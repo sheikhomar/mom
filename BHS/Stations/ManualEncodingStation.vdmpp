@@ -31,7 +31,8 @@ Process(pTote) ==
   (
     currentTote := pTote;
     stepCounter := numOfStepsForProcessing;
-  );
+  )
+pre pTote.GetBaggage() <> nil;
 
 public Step : () ==> ()
 Step() ==
@@ -47,6 +48,7 @@ Step() ==
           if outSegment.CanProcess(currentTote)
           then
             (
+              currentTote.GetBaggage().RemoveAttr(<BadTag>);
               outSegment.Process(currentTote);
               currentTote := nil;
             );
