@@ -16,15 +16,19 @@ public SampleLayout1 : TransportLayout = mk_(
     new CombineStation(mk_token(3), "Combiner1"),
     new TrackingStation(mk_token(4), "Tracker1"),
     new ManualEncodingStation(mk_token(5), "ManualEncoder1"),
-    new DischargeStation(mk_token(6), "Discharge1")
+    new ScreeningL1Station(mk_token(6), "Screening1"),
+    new DestructionStation(mk_token(7), "Destroyer1"),
+    new DischargeStation(mk_token(20), "Discharge1")
   ],
   [
-    [ 0,  0, 35,  0,  0,  0], -- CheckIn1
-    [ 0,  0, 20,  0,  0,  0], -- CheckIn2
-    [ 0,  0,  0, 30,  0,  0], -- Combiner1
-    [ 0,  0,  0,  0, 40, 20], -- Tracker1
-    [ 0,  0,  0,  0,  0, 20], -- ManualEncoder1
-    [ 0,  0,  0,  0,  0,  0]  -- Discharge1
+    [ 0,  0, 35,  0,  0,  0,  0,  0], -- CheckIn1
+    [ 0,  0, 20,  0,  0,  0,  0,  0], -- CheckIn2
+    [ 0,  0,  0, 30,  0,  0,  0,  0], -- Combiner1
+    [ 0,  0,  0,  0, 40, 20,  0,  0], -- Tracker1
+    [ 0,  0,  0,  0,  0, 20,  0,  0], -- ManualEncoder1
+    [ 0,  0,  0,  0,  0,  0, 40, 20], -- Screening1
+    [ 0,  0,  0,  0,  0,  0,  0,  0], -- Destroyer1
+    [ 0,  0,  0,  0,  0,  0,  0,  0]  -- Discharge1
   ]
 )
 

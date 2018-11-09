@@ -20,15 +20,17 @@ Run () ==
   let 
     tote1 = new Tote(1, 10),
     tote2 = new Tote(2, 10),
+    tote3 = new Tote(3, 10),
     baggage1 = new Baggage(),
-    baggage2 = new Baggage({<BadTag>})
+    baggage2 = new Baggage({<BadTag>}),
+    baggage3 = new Baggage({<FailsSecurityL1>})
   in (
     dcl station : Station;
     dcl output : seq of char := "[";
-    
 
     tote1.Insert(baggage1);
     tote2.Insert(baggage2);
+    tote3.Insert(baggage3);
 
     IO`print("Initial config: \n\n");
     station := transport.GetStation("CheckIn1");
@@ -38,6 +40,11 @@ Run () ==
 
     station := transport.GetStation("CheckIn2");
     station.Process(tote2);
+    output := output ^ transport.ToJSON() ^ ", ";
+    transport.Step();
+
+    station := transport.GetStation("CheckIn1");
+    station.Process(tote3);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
