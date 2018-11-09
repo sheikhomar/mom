@@ -23,9 +23,9 @@ setUp() ==
     baggageWithFaultyTag = new Baggage({<BadTag>})
   in (
     goodTote := new Tote(1455, 10);
-    goodTote.Insert(baggageWithGoodTag);
+    goodTote.Load(baggageWithGoodTag);
     faultyTote := new Tote(1456, 10);
-    faultyTote.Insert(baggageWithFaultyTag);
+    faultyTote.Load(baggageWithFaultyTag);
     someTote := new Tote(1457, 10);
     trackingStation := tracking;
     toManualEncoding := new Segment(tracking, manual, 25);

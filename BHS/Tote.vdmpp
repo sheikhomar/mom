@@ -21,9 +21,18 @@ GetLength() == return length;
 public pure GetBaggage : () ==> [Baggage]
 GetBaggage() == return baggage;
 
-public Insert : Baggage ==> ()
-Insert(pBaggage) ==
+public Load : Baggage ==> ()
+Load(pBaggage) ==
   baggage := pBaggage
 pre baggage = nil;
+
+public Unload : () ==> Baggage
+Unload() ==
+  let b = baggage
+  in (
+    baggage := nil;
+    return b;
+  )
+pre baggage <> nil;
 
 end Tote

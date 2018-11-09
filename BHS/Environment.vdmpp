@@ -28,9 +28,9 @@ Run () ==
     dcl station : Station;
     dcl output : seq of char := "[";
 
-    tote1.Insert(baggage1);
-    tote2.Insert(baggage2);
-    tote3.Insert(baggage3);
+    tote1.Load(baggage1);
+    tote2.Load(baggage2);
+    tote3.Load(baggage3);
 
     IO`print("Initial config: \n\n");
     station := transport.GetStation("CheckIn1");

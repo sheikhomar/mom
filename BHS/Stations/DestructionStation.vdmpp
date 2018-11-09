@@ -17,7 +17,11 @@ pre pTote.GetBaggage() <> nil;
 public Step : () ==> ()
 Step() ==
   (
-    skip;
+    if currentTote <> nil
+    then
+      let baggage = currentTote.Unload()
+      in skip;
+    currentTote := nil;
   );
 
 functions

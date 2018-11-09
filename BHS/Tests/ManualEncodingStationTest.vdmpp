@@ -28,8 +28,8 @@ SetUpObjectsForTest(pNumOfSteps) ==
     tote1 := new Tote(1455, 10);
     tote2 := new Tote(1456, 10);
     baggageWithFaultyTag := new Baggage({<BadTag>});
-    tote1.Insert(baggageWithFaultyTag);
-    tote2.Insert(baggageWithFaultyTag);
+    tote1.Load(baggageWithFaultyTag);
+    tote2.Load(baggageWithFaultyTag);
   );
 
 

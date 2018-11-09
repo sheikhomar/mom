@@ -23,9 +23,9 @@ setUp() ==
     badBaggage = new Baggage({<FailsSecurityL1>})
   in (
     goodTote := new Tote(1455, 10);
-    goodTote.Insert(goodBaggage);
+    goodTote.Load(goodBaggage);
     badTote := new Tote(1456, 10);
-    badTote.Insert(badBaggage);
+    badTote.Load(badBaggage);
     someTote := new Tote(1457, 10);
     screeningStation := screening;
     toDestruction := new Segment(screening, destruction, 25);

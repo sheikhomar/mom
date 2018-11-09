@@ -1,0 +1,61 @@
+class DestructionStationTest is subclass of TestCase
+
+instance variables
+
+private destructionStation : [DestructionStation] := nil;
+private tote1 : [Tote] := nil;
+
+operations
+
+public setUp : () ==> ()
+setUp() ==
+  let
+    source = new CheckInStation(mk_token(1), "Checkin"),
+    target = new DestructionStation(mk_token(2), "Destroy"),
+    segment = new Segment(source, target, 25),
+    baggage = new Baggage()
+  in (
+    destructionStation := target;
+    tote1 := new Tote(1455, 10);
+    tote1.Load(baggage);
+  );
+
+/*
+ * Tests for CanProcess()
+ */
+public TestCanProcessWhenNothingIsBeingProcessing : () ==> ()
+TestCanProcessWhenNothingIsBeingProcessing() ==
+  (
+    Assert`assertTrue(destructionStation.CanProcess());
+  );
+
+public TestCanProcessWhenToteIsProcessing : () ==> ()
+TestCanProcessWhenToteIsProcessing() ==
+  (
+    destructionStation.Process(tote1);
+    Assert`assertFalse(destructionStation.CanProcess());
+  );
+
+/*
+ * Tests for Step()
+ */
+public TestStepWhenNotProcessing : () ==> ()
+TestStepWhenNotProcessing() ==
+  (
+    -- Nothing should happen
+    destructionStation.Step();
+    Assert`assertTrue(destructionStation.CanProcess());
+  );
+
+public TestStepWhenProcessing : () ==> ()
+TestStepWhenProcessing() ==
+  (
+    destructionStation.Process(tote1);
+    Assert`assertFalse(destructionStation.CanProcess());
+    Assert`assertFalse(tote1.GetBaggage() = nil);
+    destructionStation.Step();
+    Assert`assertTrue(destructionStation.CanProcess());
+    Assert`assertTrue(tote1.GetBaggage() = nil)
+  );
+
+end DestructionStationTest
