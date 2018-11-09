@@ -1,18 +1,29 @@
 class Baggage is subclass of Global
 
+types
+
+public Attribute = <BadTag> | <FailsSecurityL1>;
+
 instance variables
 
-hasBadTag : bool := false;
+private attributes : set of Attribute;
 
 operations
 
 public Baggage : () ==> Baggage
-Baggage() == skip;
+Baggage() == attributes := {};
 
-public Baggage : bool ==> Baggage
-Baggage(pHasBadTag) == hasBadTag := pHasBadTag;
+public Baggage : set1 of Attribute ==> Baggage
+Baggage(pInitialAttributes) == 
+  attributes := pInitialAttributes;
 
-public HasBadTag : () ==> bool
-HasBadTag() == return hasBadTag;
+public SetAttr : Attribute ==> ()
+SetAttr(pAttr) == 
+  attributes := attributes union { pAttr }
+pre not pAttr in set attributes;
+
+public HasAttr : Attribute ==> bool
+HasAttr(pAttr) ==
+  return pAttr in set attributes;
 
 end Baggage

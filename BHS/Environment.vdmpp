@@ -20,11 +20,12 @@ Run () ==
   let 
     tote1 = new Tote(1, 10),
     tote2 = new Tote(2, 10),
-    baggage1 = new Baggage(false),
-    baggage2 = new Baggage(true)
+    baggage1 = new Baggage(),
+    baggage2 = new Baggage({<BadTag>})
   in (
     dcl station : Station;
     dcl output : seq of char := "[";
+    
 
     tote1.Insert(baggage1);
     tote2.Insert(baggage2);

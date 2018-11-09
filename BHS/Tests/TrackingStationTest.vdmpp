@@ -20,7 +20,7 @@ setUp() ==
     discharge = new DischargeStation(mk_token(4), "Discharge"),
     inSeg1 =  new Segment(checkin, tracking, 25),
     baggageWithGoodTag = new Baggage(),
-    baggageWithFaultyTag = new Baggage(true)
+    baggageWithFaultyTag = new Baggage({<BadTag>})
   in (
     goodTote := new Tote(1455, 10);
     goodTote.Insert(baggageWithGoodTag);

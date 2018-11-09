@@ -18,7 +18,7 @@ public Step : () ==> ()
 Step() ==
   (
     dcl nextSegment : Segment;
-    if currentTote <> nil and currentTote.GetBaggage().HasBadTag()
+    if currentTote <> nil and currentTote.GetBaggage().HasAttr(<BadTag>)
     then nextSegment := FindSegmentToManualEncoding(segments)
     else nextSegment := FindSegmentTowardsDischarge(GetId(), segments);
     if currentTote <> nil and nextSegment.CanProcess(currentTote)
