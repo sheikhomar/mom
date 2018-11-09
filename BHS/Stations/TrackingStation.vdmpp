@@ -6,10 +6,6 @@ public TrackingStation : StationID * seq of char ==> TrackingStation
 TrackingStation(pId, pName) ==
   ForkStation(pId, pName);
 
-pure protected HasCorrectConfig : () ==> bool
-HasCorrectConfig() ==
-  return HasCorrectSegmentConfiguration(GetId(), segments);
-
 pure protected CanGoTowardsDischarge : Tote ==> bool
 CanGoTowardsDischarge(pTote) ==
   return not pTote.GetBaggage().HasAttr(<BadTag>);
@@ -17,23 +13,5 @@ CanGoTowardsDischarge(pTote) ==
 pure protected IsTowardsDischage : Station ==> bool
 IsTowardsDischage(pStation) ==
   return not isofclass(ManualEncodingStation, pStation);
-
-functions
-
-private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
-HasCorrectSegmentConfiguration(pCurrentid, pSegments) ==
-  let outSegments = { seg | seg in set pSegments & seg.IsSourceStation(pCurrentid) }
-  in
-    -- Ensure that there are at least 3 segments i.e., there must
-    -- be only 2 out segments and at least one in segment
-    card pSegments >= 3 and
-    -- Ensure that we only have 2 out segments
-    card outSegments = 2 and
-    -- And only one of the out segments goes to the manual encoding
-    exists outSegmentToManualEncoding in set outSegments &
-      isofclass(ManualEncodingStation, outSegmentToManualEncoding.GetTargetStation()) and
-      forall otherSegment in set outSegments &
-        otherSegment.GetId() <> outSegmentToManualEncoding.GetId() =>
-          not isofclass(ManualEncodingStation, otherSegment.GetTargetStation());
 
 end TrackingStation

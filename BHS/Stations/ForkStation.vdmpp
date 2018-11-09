@@ -38,16 +38,13 @@ Step() ==
   )
 pre HasCorrectConfig();
 
-pure protected HasCorrectConfig : () ==> bool
-HasCorrectConfig() == is subclass responsibility;
-
 pure protected CanGoTowardsDischarge : Tote ==> bool
 CanGoTowardsDischarge(-) == is subclass responsibility;
 
 pure protected IsTowardsDischage : Station ==> bool
 IsTowardsDischage(-) == is subclass responsibility;
 
-pure private FindOtherSegment : StationID * set of Segment ==> Segment
+pure protected FindOtherSegment : StationID * set of Segment ==> Segment
 FindOtherSegment(pCurrentStationId, pSegments) ==
   return let towardsOther in set
     { segment | segment in set pSegments &
@@ -57,7 +54,7 @@ FindOtherSegment(pCurrentStationId, pSegments) ==
     }
   in towardsOther;
 
-pure private FindDischargeSegment : StationID * set of Segment ==> Segment
+pure protected FindDischargeSegment : StationID * set of Segment ==> Segment
 FindDischargeSegment(pCurrentStationId, pSegments) ==
   return let towardsDischarge in set
     { segment | segment in set pSegments &
@@ -66,5 +63,22 @@ FindDischargeSegment(pCurrentStationId, pSegments) ==
       IsTowardsDischage(segment.GetTargetStation())
     }
   in towardsDischarge;
+
+pure protected HasCorrectConfig : () ==> bool
+HasCorrectConfig() ==
+  return
+    let outSegments = { s | s in set segments & s.IsSourceStation(GetId()) }
+  in
+    -- Ensure that there are at least 3 segments i.e., there must
+    -- be only 2 out segments and at least one in segment
+    card segments >= 3 and
+    -- Ensure that we only have 2 out segments
+    card outSegments = 2 and
+    -- And only one of the out segments goes towards the discharge station
+    exists outSegmentNotTowardsDischage in set outSegments &
+      not IsTowardsDischage(outSegmentNotTowardsDischage.GetTargetStation()) and
+      forall otherSegment in set outSegments &
+        otherSegment.GetId() <> outSegmentNotTowardsDischage.GetId() =>
+          IsTowardsDischage(otherSegment.GetTargetStation());
 
 end ForkStation
