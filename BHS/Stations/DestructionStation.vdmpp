@@ -22,10 +22,9 @@ Step() ==
 
 functions
 
-
 private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
 HasCorrectSegmentConfiguration(pCurrentId, pSegments) ==
-  true;
-
+  card GetOutSegments(pCurrentId, pSegments) = 1 and
+  card GetInSegments(pCurrentId, pSegments) > 0;
 
 end DestructionStation

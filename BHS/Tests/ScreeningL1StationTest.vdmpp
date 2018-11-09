@@ -14,10 +14,11 @@ operations
 public setUp : () ==> ()
 setUp() ==
   let
-    checkin = new CheckInStation(mk_token(1), "CheckIn"),
+    checkin = new CheckInStation(mk_token(1), "Checkin"),
     screening = new ScreeningL1Station(mk_token(2), "ScreeningLevel1"),
     destruction = new DestructionStation(mk_token(3), "Destroy"),
     discharge = new DischargeStation(mk_token(4), "Discharge"),
+    inSeg1 =  new Segment(checkin, screening, 25),
     goodBaggage = new Baggage(),
     badBaggage = new Baggage({<FailsSecurityL1>})
   in (
@@ -34,8 +35,8 @@ setUp() ==
 /*
  * Tests for CanProcess()
  */
-public TestCanProcessWhenNothingIsBeingProcessing : () ==> ()
-TestCanProcessWhenNothingIsBeingProcessing() ==
+public TestCanProcessWhenNothingIsProcessing : () ==> ()
+TestCanProcessWhenNothingIsProcessing() ==
   (
     Assert`assertTrue(screeningStation.CanProcess());
   );
@@ -56,6 +57,28 @@ TestStepWhenNotProcessing() ==
     -- Nothing should happen
     screeningStation.Step();
     Assert`assertTrue(screeningStation.CanProcess());
+  );
+
+public TestStepWhenProcessingGoodTote : () ==> ()
+TestStepWhenProcessingGoodTote() ==
+  (
+    screeningStation.Process(goodTote);
+    Assert`assertFalse(screeningStation.CanProcess());
+    screeningStation.Step();
+    Assert`assertTrue(screeningStation.CanProcess());
+    Assert`assertFalse(toDischarge.CanProcess(someTote));
+    Assert`assertTrue(toDestruction.CanProcess(someTote));
+  );
+
+public TestStepWhenProcessingFaultyTote : () ==> ()
+TestStepWhenProcessingFaultyTote() ==
+  (
+    screeningStation.Process(badTote);
+    Assert`assertFalse(screeningStation.CanProcess());
+    screeningStation.Step();
+    Assert`assertTrue(screeningStation.CanProcess());
+    Assert`assertTrue(toDischarge.CanProcess(someTote));
+    Assert`assertFalse(toDestruction.CanProcess(someTote));
   );
 
 end ScreeningL1StationTest

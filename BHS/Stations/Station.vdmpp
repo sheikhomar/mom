@@ -48,11 +48,14 @@ public pure GetCurrentTote : () ==> [Tote]
 GetCurrentTote() ==
   return currentTote;
 
-
-
-
 functions
--- TODO Define functiones here
-traces
--- TODO Define Combinatorial Test Traces here
+
+protected GetInSegments : StationID * set of Segment -> set of Segment
+GetInSegments(pCurrentStationId, pSegments) ==
+  { s | s in set pSegments & s.IsTargetStation(pCurrentStationId) };
+
+protected GetOutSegments : StationID * set of Segment -> set of Segment
+GetOutSegments(pCurrentStationId, pSegments) ==
+  { s | s in set pSegments & s.IsSourceStation(pCurrentStationId) };
+
 end Station
