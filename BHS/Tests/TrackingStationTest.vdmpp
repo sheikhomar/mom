@@ -81,4 +81,16 @@ TestStepWhenProcessingFaultyTote() ==
     Assert`assertFalse(toManualEncoding.CanProcess(someTote));
   );
 
+public TestStepWhenNextSegmentIsFull : () ==> ()
+TestStepWhenNextSegmentIsFull() ==
+  (
+    toDischarge.Process(someTote); -- Block the discharge station
+    trackingStation.Process(goodTote);
+    Assert`assertFalse(trackingStation.CanProcess());
+    trackingStation.Step();
+    Assert`assertFalse(trackingStation.CanProcess());
+    Assert`assertFalse(toDischarge.CanProcess(someTote));
+    Assert`assertTrue(toManualEncoding.CanProcess(someTote));
+  );
+
 end TrackingStationTest
