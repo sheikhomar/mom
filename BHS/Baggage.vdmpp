@@ -7,15 +7,23 @@ public Attribute = <BadTag> | <FailsSecurityL1>;
 instance variables
 
 private attributes : set of Attribute;
+private destination : FlightDestination;
 
 operations
 
-public Baggage : () ==> Baggage
-Baggage() == attributes := {};
+public Baggage : FlightDestination ==> Baggage
+Baggage(pDest) == 
+  (
+    attributes := {};
+    destination := pDest;
+  );
 
-public Baggage : set1 of Attribute ==> Baggage
-Baggage(pInitialAttributes) == 
-  attributes := pInitialAttributes;
+public Baggage : FlightDestination * set1 of Attribute ==> Baggage
+Baggage(pDest, pInitialAttributes) == 
+  (
+    attributes := pInitialAttributes;
+    destination := pDest;
+  );
 
 public SetAttr : Attribute ==> ()
 SetAttr(pAttr) == 
@@ -30,5 +38,8 @@ public RemoveAttr : Attribute ==> ()
 RemoveAttr(pAttr) ==
   attributes := attributes \ { pAttr }
 pre pAttr in set attributes;
+
+public pure GetDestination : () ==> FlightDestination
+GetDestination() == return destination;
 
 end Baggage

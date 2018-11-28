@@ -1,0 +1,141 @@
+class SortationStationTest is subclass of TestCase
+
+instance variables
+
+private sortationStation : [SortationStation] := nil;
+private someTote : [Tote] := nil;
+private totes : map Global`FlightDestination to Tote;
+private stations : map Global`FlightDestination to DischargeStation;
+private segments : map Global`FlightDestination to Segment;
+
+operations
+
+public setUp : () ==> ()
+setUp() ==
+  let
+    checkin = new CheckInStation(mk_token(1), "Checkin"),
+    sortation = new SortationStation(mk_token(8), "Sortation"),
+    toBeijing = new DischargeStation(mk_token(9), "ToBeijing"),
+    toLondon = new DischargeStation(mk_token(10), "ToLondon"),
+    toNewYork = new DischargeStation(mk_token(11), "ToNewYork"),
+    toCopenhagen = new DischargeStation(mk_token(12), "ToCph"),
+    seg1 =  new Segment(checkin, sortation, 25),
+    segBeijing =  new Segment(sortation, toBeijing, 10),
+    segLondon =  new Segment(sortation, toLondon, 10),
+    segNewYork =  new Segment(sortation, toNewYork, 10),
+    segCopenhagen =  new Segment(sortation, toCopenhagen, 10),
+    baggage1 = new Baggage(<Beijing>),
+    baggage2 = new Baggage(<London>),
+    baggage3 = new Baggage(<NewYork>),
+    baggage4 = new Baggage(<Copenhagen>),
+    tote1 = new Tote(1, 10),
+    tote2 = new Tote(2, 10),
+    tote3 = new Tote(3, 10),
+    tote4 = new Tote(4, 10)
+  in (
+    tote1.Load(baggage1);
+    tote2.Load(baggage2);
+    tote3.Load(baggage3);
+    tote4.Load(baggage4);
+    totes := {
+      <Beijing> |-> tote1,
+      <London> |-> tote2,
+      <NewYork> |-> tote3, 
+      <Copenhagen> |-> tote4 
+    };
+    stations := {
+      <Beijing> |-> toBeijing,
+      <London> |-> toLondon,
+      <NewYork> |-> toNewYork, 
+      <Copenhagen> |-> toCopenhagen 
+    };
+    segments := {
+      <Beijing> |-> segBeijing,
+      <London> |-> segLondon,
+      <NewYork> |-> segNewYork, 
+      <Copenhagen> |-> segCopenhagen 
+    };
+    someTote := new Tote(1457, 10);
+    sortationStation := sortation;
+    
+  );
+
+/*
+ * Tests for CanProcess()
+ */
+public TestCanProcessWhenNothingIsProcessing : () ==> ()
+TestCanProcessWhenNothingIsProcessing() ==
+  (
+    Assert`assertTrue(sortationStation.CanProcess());
+  );
+
+public TestCanProcessWhenToteIsProcessing : () ==> ()
+TestCanProcessWhenToteIsProcessing() ==
+  (
+    sortationStation.Process(someTote);
+    Assert`assertFalse(sortationStation.CanProcess());
+  );
+
+/*
+ * Tests for Step()
+ */
+public TestStepWhenNotProcessing : () ==> ()
+TestStepWhenNotProcessing() ==
+  (
+    -- Nothing should happen
+    sortationStation.Step();
+    Assert`assertTrue(sortationStation.CanProcess());
+  );
+
+public TestStepWhenProcessingDifferentTotes : () ==> ()
+TestStepWhenProcessingDifferentTotes() ==
+  (
+    let
+      destination = <Beijing>,
+      otherStations = {destination} <-: stations,
+      otherSegments = {destination} <-: segments, 
+      station = stations(destination),
+      tote = totes(destination),
+      toSegment = segments(destination)
+    in 
+      (
+        sortationStation.Process(tote);
+        Assert`assertFalse(sortationStation.CanProcess());
+        sortationStation.Step();
+        
+        -- Should be free.
+        Assert`assertTrue(sortationStation.CanProcess());
+        
+        -- Segment leading to correct discharge station should be occupied
+        Assert`assertFalse(toSegment.CanProcess(someTote));
+        
+        -- All other segments should be free
+        for all otherSegment in set rng otherSegments
+        do Assert`assertTrue(otherSegment.CanProcess(someTote));
+        skip;
+      ); 
+  );
+
+--public TestStepWhenProcessingGoodTote : () ==> ()
+--TestStepWhenProcessingGoodTote() ==
+--  (
+--    sortation.Process(goodTote);
+--    Assert`assertFalse(sortation.CanProcess());
+--    sortation.Step();
+--    Assert`assertTrue(sortation.CanProcess());
+--    Assert`assertFalse(toDischarge.CanProcess(someTote));
+--    Assert`assertTrue(toDestruction.CanProcess(someTote));
+--  );
+--
+--public TestStepWhenProcessingFaultyTote : () ==> ()
+--TestStepWhenProcessingFaultyTote() ==
+--  (
+--    sortation.Process(badTote);
+--    Assert`assertFalse(sortation.CanProcess());
+--    sortation.Step();
+--    Assert`assertTrue(sortation.CanProcess());
+--    Assert`assertTrue(toDischarge.CanProcess(someTote));
+--    Assert`assertFalse(toDestruction.CanProcess(someTote));
+--  );
+
+end SortationStationTest

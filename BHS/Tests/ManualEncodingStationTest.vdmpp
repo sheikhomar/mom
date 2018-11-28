@@ -27,7 +27,7 @@ SetUpObjectsForTest(pNumOfSteps) ==
     outSegment := new Segment(encoder, discharge, 25);
     tote1 := new Tote(1455, 10);
     tote2 := new Tote(1456, 10);
-    baggageWithFaultyTag := new Baggage({<BadTag>});
+    baggageWithFaultyTag := new Baggage(<Beijing>, {<BadTag>});
     tote1.Load(baggageWithFaultyTag);
     tote2.Load(baggageWithFaultyTag);
   );

@@ -1,0 +1,59 @@
+class SortationStation is subclass of Station
+
+values
+
+DestinationMap : inmap FlightDestination to StationID = {
+  <Beijing> |-> mk_token(9),
+  <London> |-> mk_token(10),
+  <NewYork> |-> mk_token(11),
+  <Copenhagen> |-> mk_token(12)
+};
+
+operations
+
+public SortationStation : StationID * seq of char ==> SortationStation
+SortationStation(pId, pName) ==
+  Station(pId, pName);
+
+pure public CanProcess : () ==> bool
+CanProcess() == return currentTote = nil
+pre HasCorrectSegmentConfiguration(GetId(), segments);
+
+public Process : Tote ==> ()
+Process(pTote) == currentTote := pTote;
+
+public Step : () ==> ()
+Step() ==
+  if currentTote <> nil
+  then 
+    let nextSegment = GetNextSegment(currentTote, GetId(), segments)
+    in 
+      -- Check if the segment can process
+      if nextSegment.CanProcess(currentTote)
+      then (
+        nextSegment.Process(currentTote);
+        currentTote := nil;
+      );
+
+
+functions
+
+private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
+HasCorrectSegmentConfiguration(pStationId, pSegments) ==
+   forall stationId in set rng DestinationMap &
+     exists segment in set pSegments &
+       segment.IsTargetStation(stationId);
+
+private GetNextSegment : Tote * StationID * set of Segment -> Segment
+GetNextSegment(pCurrentTote, pStationId, pSegments) ==
+  let
+    baggageDest = pCurrentTote.GetBaggage().GetDestination(),
+    stationMap = inverse DestinationMap,
+    outSegments = { s | s in set pSegments & s.IsSourceStation(pStationId) }
+  in
+    let segment in set outSegments 
+      be st stationMap(segment.GetTargetStation().GetId()) = baggageDest
+    in 
+      segment;
+
+end SortationStation

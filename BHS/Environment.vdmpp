@@ -21,9 +21,12 @@ Run () ==
     tote1 = new Tote(1, 10),
     tote2 = new Tote(2, 10),
     tote3 = new Tote(3, 10),
-    baggage1 = new Baggage(),
-    baggage2 = new Baggage({<BadTag>}),
-    baggage3 = new Baggage({<FailsSecurityL1>})
+    tote4 = new Tote(4, 10),
+    baggage1 = new Baggage(<Beijing>),
+    baggage2 = new Baggage(<London>, {<BadTag>}),
+    baggage3 = new Baggage(<NewYork>, {<FailsSecurityL1>}),
+    baggage4 = new Baggage(<Copenhagen>)
+    
   in (
     dcl station : Station;
     dcl output : seq of char := "[";
@@ -31,24 +34,36 @@ Run () ==
     tote1.Load(baggage1);
     tote2.Load(baggage2);
     tote3.Load(baggage3);
+    tote4.Load(baggage4);
 
-    IO`print("Initial config: \n\n");
+    IO`print("Generate initial transport layout...\n");
+    output := output ^ transport.ToJSON() ^ ", ";
+    
+    IO`print("Loading tote 1 in checkin station 1...\n");
     station := transport.GetStation("CheckIn1");
     station.Process(tote1);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
+    IO`print("Loading tote 2 in checkin station 2...\n");
     station := transport.GetStation("CheckIn2");
     station.Process(tote2);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
+    IO`print("Loading tote 3 in checkin station 1...\n");
     station := transport.GetStation("CheckIn1");
     station.Process(tote3);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
+     
+    IO`print("Loading tote 4 in checkin station 2...\n");
+    station := transport.GetStation("CheckIn2");
+    station.Process(tote4);
+    output := output ^ transport.ToJSON() ^ ", ";
+    transport.Step();
 
-    for i = 1 to 20 by 1 do
+    for i = 1 to 30 by 1 do
     (
       IO`print("Stepping... \n");
       output := output ^ transport.ToJSON() ^ ", ";

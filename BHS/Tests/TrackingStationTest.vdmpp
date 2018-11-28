@@ -19,8 +19,8 @@ setUp() ==
     manual = new ManualEncodingStation(mk_token(3), "ManualEncoder"),
     discharge = new DischargeStation(mk_token(4), "Discharge"),
     inSeg1 =  new Segment(checkin, tracking, 25),
-    baggageWithGoodTag = new Baggage(),
-    baggageWithFaultyTag = new Baggage({<BadTag>})
+    baggageWithGoodTag = new Baggage(<London>),
+    baggageWithFaultyTag = new Baggage(<London>, {<BadTag>})
   in (
     goodTote := new Tote(1455, 10);
     goodTote.Load(baggageWithGoodTag);

@@ -5,4 +5,6 @@ types
 
 public Distance = nat1; -- Unit: cm
 
+public FlightDestination = <Beijing> | <NewYork> | <London> | <Copenhagen>;
+
 end Global

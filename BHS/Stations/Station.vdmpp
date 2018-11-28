@@ -1,4 +1,4 @@
-class Station
+class Station is subclass of Global
 types
 
 public StationID = token

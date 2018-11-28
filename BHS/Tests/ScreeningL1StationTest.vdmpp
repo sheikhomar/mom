@@ -19,8 +19,8 @@ setUp() ==
     destruction = new DestructionStation(mk_token(3), "Destroy"),
     discharge = new DischargeStation(mk_token(4), "Discharge"),
     inSeg1 =  new Segment(checkin, screening, 25),
-    goodBaggage = new Baggage(),
-    badBaggage = new Baggage({<FailsSecurityL1>})
+    goodBaggage = new Baggage(<Beijing>),
+    badBaggage = new Baggage(<Beijing>, {<FailsSecurityL1>})
   in (
     goodTote := new Tote(1455, 10);
     goodTote.Load(goodBaggage);
