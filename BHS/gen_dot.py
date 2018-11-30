@@ -4,12 +4,30 @@ import pydot
 import glob
 from PIL import Image
 
+TOTE_COLORS = {
+    1: 'green',
+    2: 'blue',
+    3: 'red',
+    4: 'purple'
+}
+
 
 def load_config():
     with open('generated/simulation.json', 'r') as f:
         content = f.read()
     content = content[1:len(content)-1].replace('\\"', '"')
-    return json.loads(content)
+    obj = json.loads(content)
+    print(json.dumps(obj, indent=2))
+    return obj
+
+
+def get_tote_label(tote):
+    id = tote['id']
+    color = TOTE_COLORS[id]
+    label = f'<br/><font color="{color}">t{id}</font>'
+    if 'position' in tote:
+        label += f':{tote["position"]}'
+    return label
 
 
 def generate_station(station):
@@ -17,9 +35,10 @@ def generate_station(station):
     totes = station['totes']
     node = pydot.Node(name, shape='box')
     if len(totes) > 0:
-        label = name
+        label = f'<{name}'
         for tote in totes:
-            label += '\\nt' + str(tote['id'])
+            label += get_tote_label(tote)
+        label += '>'
         node.set('label', label)
     return node
 
@@ -29,9 +48,10 @@ def generate_segment(graph, segment):
     trg_node = graph.get_node(segment['target'])[0]
     edge = pydot.Edge(src=src_node, dst=trg_node)
     totes = segment['totes']
-    label = str(segment['distance'])
+    label = '<' + str(segment['distance'])
     for tote in totes:
-        label += '\\nt{}:{}'.format(tote['id'], tote['position'])
+        label += get_tote_label(tote)
+    label += '>'
     edge.set('label', label)
     return edge
 
@@ -71,7 +91,7 @@ def generate_graphs(simulation_data):
 def main():
     simulation_data = load_config()
     generate_graphs(simulation_data)
-    concat_images()
+    # concat_images()
     print('Done!')
 
 
