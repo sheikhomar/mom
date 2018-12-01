@@ -3,7 +3,7 @@ class Environment
 instance variables
 
 busy : bool := false;
-private transport : BaggageTransport;
+private transport : BHS;
 
 operations
 
@@ -11,17 +11,13 @@ public Environment: () ==> Environment
 Environment () ==
   (
     busy := true;
-    transport := BaggageTransport`LoadSampleLayout1();
+    transport := BHS`LoadSampleLayout1();
   );
 
 
 public Run: () ==> ()
 Run () ==
   let 
-    tote1 = new Tote(1, 10),
-    tote2 = new Tote(2, 10),
-    tote3 = new Tote(3, 10),
-    tote4 = new Tote(4, 10),
     baggage1 = new Baggage(<Beijing>),
     baggage2 = new Baggage(<London>, {<BadTag>}),
     baggage3 = new Baggage(<NewYork>, {<FailsSecurityL1>}),
@@ -31,45 +27,45 @@ Run () ==
     dcl station : Station;
     dcl output : seq of char := "[";
 
-    tote1.Load(baggage1);
-    tote2.Load(baggage2);
-    tote3.Load(baggage3);
-    tote4.Load(baggage4);
+    BHS`tote1.Load(baggage1);
+    BHS`tote2.Load(baggage2);
+    BHS`tote3.Load(baggage3);
+    BHS`tote4.Load(baggage4);
 
     IO`print("Generate initial transport layout...\n");
     output := output ^ transport.ToJSON() ^ ", ";
     
     IO`print("Loading tote 1 in checkin station 1...\n");
     station := transport.GetStation("CheckIn1");
-    station.Process(tote1);
+    station.Process(BHS`tote1);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
     IO`print("Loading tote 2 in checkin station 2...\n");
     station := transport.GetStation("CheckIn2");
-    station.Process(tote2);
+    station.Process(BHS`tote2);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
 
     IO`print("Loading tote 3 in checkin station 1...\n");
     station := transport.GetStation("CheckIn1");
-    station.Process(tote3);
+    station.Process(BHS`tote3);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
      
     IO`print("Loading tote 4 in checkin station 2...\n");
     station := transport.GetStation("CheckIn2");
-    station.Process(tote4);
+    station.Process(BHS`tote4);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
-
-    for i = 1 to 30 by 1 do
-    (
-      IO`print("Stepping... \n");
-      output := output ^ transport.ToJSON() ^ ", ";
-      transport.Step();
-    );
-
+--
+--    for i = 1 to 30 by 1 do
+--    (
+--      IO`print("Stepping... \n");
+--      output := output ^ transport.ToJSON() ^ ", ";
+--      transport.Step();
+--    );
+--
     output := output ^ " { } ";
     output := output ^ "]";
     IO`print(output);

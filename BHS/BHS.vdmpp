@@ -1,11 +1,8 @@
--- Represents transportation system. It is a directed graph 
--- where stations are represented as nodes and segments 
--- between stations are represented as edges.
-class BaggageTransport is subclass of Global
+class BHS is subclass of Global
+
 types
 
 public TransportLayout = seq of Station * seq1 of (seq1 of nat);
-
 
 values
 
@@ -42,51 +39,49 @@ public SampleLayout1 : TransportLayout = mk_(
 
 instance variables
 
+public static tote1 : Tote := new Tote(1, 10);
+public static tote2 : Tote := new Tote(2, 10);
+public static tote3 : Tote := new Tote(3, 10);
+public static tote4 : Tote := new Tote(4, 10);
+
 private stations : map seq of char to Station;
 private segments : set of Segment;
 
 
 operations
 
-public BaggageTransport: () ==> BaggageTransport
-BaggageTransport() ==
+public BHS: () ==> BHS
+BHS() ==
   (
     stations := { |-> };
     segments := {};
   );
 
 
-public static LoadSampleLayout1 : () ==> BaggageTransport
+public static LoadSampleLayout1 : () ==> BHS
 LoadSampleLayout1() ==
   return Load(SampleLayout1);
 
-public static Load : TransportLayout ==> BaggageTransport
+public static Load : TransportLayout ==> BHS
 Load(layout) == 
+  let
+    bt = new BHS(),
+    mk_(stationSeq, distanceMatrix) = layout
+  in
   (
-    dcl bt : BaggageTransport := new BaggageTransport();
-    def mk_(stationSeq, distanceMatrix) = layout in
-    (
-      for station in stationSeq do
-      (
-        bt.AddStation(station);
-      );
-      for all i in set inds distanceMatrix do
-      (
-        for all j in set inds distanceMatrix(i) do
-        (
-          if distanceMatrix(i)(j) <> 0 
-          then (
-            dcl s1 : Station := stationSeq(i);
-            dcl s2 : Station := stationSeq(j);
-            dcl distance : nat1 := distanceMatrix(i)(j);
-            dcl segment : Segment := 
-              new Segment(s1, s2, distance);
-            bt.AddSegment(segment);
-            skip;
-          );
-        );
-      );
-    );
+    for station in stationSeq do
+      bt.AddStation(station);
+    for all i in set inds distanceMatrix do
+      for all j in set inds distanceMatrix(i) do
+        if distanceMatrix(i)(j) <> 0 
+        then
+          let
+            src = stationSeq(i),
+            dest = stationSeq(j),
+            distance = distanceMatrix(i)(j),
+            segment = new Segment(src, dest, distance)
+          in 
+             bt.AddSegment(segment);
     return bt;
   );
 
@@ -125,7 +120,6 @@ public ToJSON : () ==> seq of char
 ToJSON() ==
   (
     dcl data : seq of char := "";
-    dcl tote : [Tote] := nil;
     data := data ^ "{ \"stations\": [";
     data := data ^ ConvertStationsToJSON(rng stations);
     data := data ^ "], \"segments\": [";
@@ -206,4 +200,4 @@ ConvertTotePositionsToJSON(pTotePositions) ==
     return data;
   );
 
-end BaggageTransport
+end BHS
