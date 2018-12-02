@@ -9,18 +9,18 @@ instance variables
 private id : token;
 private source : Station;
 private target : Station;
-private distance : Distance;
+private length : Length;
 private totePositions : seq of TotePosition;
 
 operations
 
-public Segment : Station * Station * Distance  ==> Segment
+public Segment : Station * Station * Length  ==> Segment
 Segment(pSourceStation, pTargetStation, pDistance) ==
   (
     source := pSourceStation;
     target := pTargetStation;
-    distance := pDistance;
-    id := mk_token([ source.GetId(), target.GetId(), distance ]);
+    length := pDistance;
+    id := mk_token([ source.GetId(), target.GetId(), length ]);
 
     -- Back reference
     source.AddSegment(self);
@@ -59,8 +59,8 @@ public pure IsTargetStation : Station`StationID ==> bool
 IsTargetStation(pStationId) ==
   return target.GetId() = pStationId;
 
-public pure GetDistance : () ==> Distance
-GetDistance() == return distance;
+public pure GetLength : () ==> Length
+GetLength() == return length;
 
 public pure GetId : () ==> token
 GetId() == return id;
@@ -89,7 +89,7 @@ Step() ==
   (
     if
       len totePositions > 0 -- We have totes on this segment
-      and totePositions(1).Position = distance -- The rear tote has reach the end of the segment
+      and totePositions(1).Position = length -- The rear tote has reach the end of the segment
       and target.CanProcess() -- The target station can process totes
     then
       let rear = totePositions(1)
@@ -115,7 +115,7 @@ UpdateTotePositions(positionDelta) ==
         then
           let nextTp = totePositions(i-1)
           in maxPos := nextTp.Position - nextTp.Tote.GetLength()
-        else maxPos := distance;
+        else maxPos := length;
 
         -- Compute new position
         if tp.Position + positionDelta > maxPos

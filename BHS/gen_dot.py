@@ -48,7 +48,7 @@ def generate_segment(graph, segment):
     trg_node = graph.get_node(segment['target'])[0]
     edge = pydot.Edge(src=src_node, dst=trg_node)
     totes = segment['totes']
-    label = '<' + str(segment['distance'])
+    label = '<' + str(segment['length'])
     for tote in totes:
         label += get_tote_label(tote)
     label += '>'

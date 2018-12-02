@@ -1,0 +1,30 @@
+class TimeNotion
+
+instance variables
+
+private static timerInstance : TimeNotion := new TimeNotion();
+private currentTime : nat := 0;
+
+values
+
+stepLength : nat = 10;
+
+operations
+
+private TimeNotion: () ==> TimeNotion
+TimeNotion() ==
+  skip;
+
+pure public static GetInstance: () ==> TimeNotion
+GetInstance() ==
+  return timerInstance;
+
+public StepTime : () ==> ()
+StepTime() ==
+  currentTime := currentTime + stepLength;
+
+pure public GetCurrentTime : () ==> nat
+GetCurrentTime() ==
+  return currentTime;
+
+end TimeNotion

@@ -1,77 +1,70 @@
-class Environment
+class Environment is subclass of Global
+
+types
+
+public StationName = seq of char;
+public Signal = StationName * Tote * Baggage;
+
+values
+
 
 instance variables
 
-busy : bool := false;
-private transport : BHS;
+private system : BHS;
+private outputPath : seq of char;
+
+private signals : seq of [Signal] := [
+  nil, -- nil means that no signal is fired at step i
+  mk_("CheckIn1", BHS`tote1, new Baggage(<Beijing>)),
+  mk_("CheckIn2", BHS`tote2, new Baggage(<London>, {<BadTag>})),
+  mk_("CheckIn1", BHS`tote3, new Baggage(<NewYork>, {<FailsSecurityL1>})),
+  mk_("CheckIn2", BHS`tote4, new Baggage(<Copenhagen>)),
+  nil, nil, nil, nil, nil, nil, nil, nil, nil, nil,
+  nil, nil, nil, nil, nil, nil, nil, nil, nil, nil,
+  nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
+];
+
 
 operations
 
-public Environment: () ==> Environment
-Environment () ==
+public Environment: BHS * seq of char ==> Environment
+Environment (pSystem, pOutputPath) ==
   (
-    busy := true;
-    transport := BHS`LoadSampleLayout1();
+    system := pSystem;
+    outputPath := pOutputPath;
   );
 
-
 public Run: () ==> ()
-Run () ==
-  let 
-    baggage1 = new Baggage(<Beijing>),
-    baggage2 = new Baggage(<London>, {<BadTag>}),
-    baggage3 = new Baggage(<NewYork>, {<FailsSecurityL1>}),
-    baggage4 = new Baggage(<Copenhagen>)
-    
-  in (
-    dcl station : Station;
+Run() ==
+  (
     dcl output : seq of char := "[";
-
-    BHS`tote1.Load(baggage1);
-    BHS`tote2.Load(baggage2);
-    BHS`tote3.Load(baggage3);
-    BHS`tote4.Load(baggage4);
-
-    IO`print("Generate initial transport layout...\n");
-    output := output ^ transport.ToJSON() ^ ", ";
-    
-    IO`print("Loading tote 1 in checkin station 1...\n");
-    station := transport.GetStation("CheckIn1");
-    station.Process(BHS`tote1);
-    output := output ^ transport.ToJSON() ^ ", ";
-    transport.Step();
-
-    IO`print("Loading tote 2 in checkin station 2...\n");
-    station := transport.GetStation("CheckIn2");
-    station.Process(BHS`tote2);
-    output := output ^ transport.ToJSON() ^ ", ";
-    transport.Step();
-
-    IO`print("Loading tote 3 in checkin station 1...\n");
-    station := transport.GetStation("CheckIn1");
-    station.Process(BHS`tote3);
-    output := output ^ transport.ToJSON() ^ ", ";
-    transport.Step();
-     
-    IO`print("Loading tote 4 in checkin station 2...\n");
-    station := transport.GetStation("CheckIn2");
-    station.Process(BHS`tote4);
-    output := output ^ transport.ToJSON() ^ ", ";
-    transport.Step();
-
-    for i = 1 to 30 by 1 do
-    (
-      IO`print("Stepping... \n");
-      output := output ^ transport.ToJSON() ^ ", ";
-      transport.Step();
-    );
+    for signal in signals
+    do
+      (
+        IO`print("[Time " ^ VDMUtil`val2seq_of_char[nat](World`timer.GetCurrentTime()) ^ "] ");
+        if signal <> nil
+        then
+          let mk_(stationName, tote, baggage) = signal
+          in
+            (
+              IO`print("Introducing baggage in " ^ stationName ^ ". ");
+              tote.Load(baggage);
+              system.GetStation(stationName).Process(tote);
+            )
+         else
+           (
+             IO`print("No signal in this step. ");
+           );
+        output := output ^ system.ToJSON() ^ ", ";
+        IO`print("Stepping... \n");
+        system.Step();
+        World`timer.StepTime();
+      );
 
     output := output ^ " { } ";
     output := output ^ "]";
-    IO`print(output);
-    let - = IO`fwriteval[seq of char]("generated/simulation.json", output, <start>)
+    let - = IO`fwriteval[seq of char](outputPath, output, <start>)
     in skip;
   );
-
 
 end Environment

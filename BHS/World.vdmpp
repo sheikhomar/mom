@@ -1,18 +1,44 @@
-class World 
+class World is subclass of Global
 
 instance variables
 
 public static env : [Environment] := nil;
-public static timer : Timer := Timer`GetInstance();
+public static timer : TimeNotion := TimeNotion`GetInstance();
+public static system : [BHS] := nil;
 
 operations
 
 public World: () ==> World
 World () ==
   (
-    env := new Environment();
+    system := ConstructSystem(SimpleNetwork1);
+    env := new Environment(system, "generated/simulation.json");
   );
 
+public ConstructSystem : TransportNetwork ==> BHS
+ConstructSystem(pNetwork) ==
+  let
+    bhs = new BHS(),
+    mk_(stationSeq, lengthMatrix) = pNetwork
+  in
+  (
+    for station in stationSeq do
+      bhs.AddStation(station);
+    for all i in set inds lengthMatrix do
+      for all j in set inds lengthMatrix(i) do
+        if lengthMatrix(i)(j) <> 0
+        then
+          let
+            src = stationSeq(i),
+            dest = stationSeq(j),
+            length = lengthMatrix(i)(j),
+            segment = new Segment(src, dest, length)
+          in
+             bhs.AddSegment(segment);
+    return bhs;
+  );
+
+--- Executes in 164.848 secs.
 public Run: () ==> ()
 Run () == 
   (
@@ -21,4 +47,37 @@ Run () ==
     IO`print("World finished!\n");
   );
 
+
+values
+
+public SimpleNetwork1 : TransportNetwork = mk_(
+  [
+    new CheckInStation(mk_token(1), "CheckIn1"),
+    new CheckInStation(mk_token(2), "CheckIn2"),
+    new CombineStation(mk_token(3), "Combiner1"),
+    new TrackingStation(mk_token(4), "Tracker1"),
+    new ManualEncodingStation(mk_token(5), "ManualEncoder1"),
+    new ScreeningL1Station(mk_token(6), "Screening1"),
+    new DestructionStation(mk_token(7), "Destroyer1"),
+    new SortationStation(mk_token(8), "Sortation"),
+    new DischargeStation(mk_token(9), "ToBeijing"),
+    new DischargeStation(mk_token(10), "ToLondon"),
+    new DischargeStation(mk_token(11), "ToNewYork"),
+    new DischargeStation(mk_token(12), "ToCph")
+  ],
+  [
+    [ 0,  0, 35,  0,  0,  0,  0,  0,  0,  0,  0,  0], --  1. CheckIn1
+    [ 0,  0, 20,  0,  0,  0,  0,  0,  0,  0,  0,  0], --  2. CheckIn2
+    [ 0,  0,  0, 30,  0,  0,  0,  0,  0,  0,  0,  0], --  3. Combiner1
+    [ 0,  0,  0,  0, 40, 20,  0,  0,  0,  0,  0,  0], --  4. Tracker1
+    [ 0,  0,  0,  0,  0, 20,  0,  0,  0,  0,  0,  0], --  5. ManualEncoder1
+    [ 0,  0,  0,  0,  0,  0, 40, 20,  0,  0,  0,  0], --  6. Screening1
+    [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0], --  7. Destroyer1
+    [ 0,  0,  0,  0,  0,  0,  0,  0, 10, 10, 10, 10], --  8. Sortation
+    [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0], --  9. To Beijing
+    [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0], -- 10. To London
+    [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0], -- 11. To NewYork
+    [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0]  -- 12. To Copenhagen
+  ]
+)
 end World

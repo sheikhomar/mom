@@ -1,20 +1,20 @@
-class Tote
+class Tote is subclass of Global
 
 instance variables
 
-private id : nat;
-private length : nat1;
+private id : ToteID;
+private length : Length;
 private baggage : [Baggage] := nil;
 
 operations
 
-public Tote : nat * nat1 ==> Tote
+public Tote : ToteID * Length ==> Tote
 Tote(pId, pLength) == ( id := pId; length := pLength; );
 
 public pure GetId : () ==> nat
 GetId() == return id;
 
-public pure GetLength : () ==> nat1
+public pure GetLength : () ==> Length
 GetLength() == return length;
 
 public pure GetBaggage : () ==> [Baggage]
