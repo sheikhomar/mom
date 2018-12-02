@@ -1,12 +1,8 @@
 class BHS is subclass of Global
 
-types
-
-public TransportLayout = seq of Station * seq1 of (seq1 of nat);
-
 values
 
-public SampleLayout1 : TransportLayout = mk_(
+public SampleLayout1 : TransportNetwork = mk_(
   [
     new CheckInStation(mk_token(1), "CheckIn1"),
     new CheckInStation(mk_token(2), "CheckIn2"),
@@ -62,7 +58,7 @@ public static LoadSampleLayout1 : () ==> BHS
 LoadSampleLayout1() ==
   return Load(SampleLayout1);
 
-public static Load : TransportLayout ==> BHS
+public static Load : TransportNetwork ==> BHS
 Load(layout) == 
   let
     bt = new BHS(),

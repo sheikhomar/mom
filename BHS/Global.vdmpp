@@ -8,4 +8,11 @@ public FlightDestination = <Beijing> | <NewYork> | <London> | <Copenhagen>;
 
 public BaggageAnnotation = <BadTag> | <FailsSecurityL1>;
 
+public TransportNetwork = seq1 of Station * seq1 of (seq1 of nat);
+
+public TotePosition :: Tote : Tote
+                       Position : nat;
+
+public StationID = token;
+
 end Global

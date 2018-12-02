@@ -4,11 +4,6 @@ values
 
 PositionChangePerStep = 10
 
-types
-
-public TotePosition :: Tote : Tote
-                       Position : nat
-
 instance variables
 
 private id : token;
