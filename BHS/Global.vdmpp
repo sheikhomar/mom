@@ -1,4 +1,3 @@
--- Base class of all other classes
 class Global
 
 types
@@ -6,5 +5,7 @@ types
 public Distance = nat1; -- Unit: cm
 
 public FlightDestination = <Beijing> | <NewYork> | <London> | <Copenhagen>;
+
+public BaggageAnnotation = <BadTag> | <FailsSecurityL1>;
 
 end Global

@@ -8,7 +8,7 @@ ScreeningL1Station(pId, pName) ==
 
 pure protected CanGoTowardsDischarge : Tote ==> bool
 CanGoTowardsDischarge(pTote) ==
-  return not pTote.GetBaggage().HasAttr(<FailsSecurityL1>);
+  return not pTote.GetBaggage().HasAnnotation(<FailsSecurityL1>);
 
 pure protected IsTowardsDischage : Station ==> bool
 IsTowardsDischage(pStation) ==

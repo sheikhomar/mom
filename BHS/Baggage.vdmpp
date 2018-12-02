@@ -1,12 +1,8 @@
 class Baggage is subclass of Global
 
-types
-
-public Attribute = <BadTag> | <FailsSecurityL1>;
-
 instance variables
 
-private attributes : set of Attribute;
+private annotations : set of BaggageAnnotation;
 private destination : FlightDestination;
 
 operations
@@ -14,30 +10,25 @@ operations
 public Baggage : FlightDestination ==> Baggage
 Baggage(pDest) == 
   (
-    attributes := {};
+    annotations := {};
     destination := pDest;
   );
 
-public Baggage : FlightDestination * set1 of Attribute ==> Baggage
-Baggage(pDest, pInitialAttributes) == 
+public Baggage : FlightDestination * set1 of BaggageAnnotation ==> Baggage
+Baggage(pDest, pInitialannotations) == 
   (
-    attributes := pInitialAttributes;
+    annotations := pInitialannotations;
     destination := pDest;
   );
 
-public SetAttr : Attribute ==> ()
-SetAttr(pAttr) == 
-  attributes := attributes union { pAttr }
-pre not pAttr in set attributes;
+pure public HasAnnotation : BaggageAnnotation ==> bool
+HasAnnotation(pAnnot) ==
+  return pAnnot in set annotations;
 
-pure public HasAttr : Attribute ==> bool
-HasAttr(pAttr) ==
-  return pAttr in set attributes;
-
-public RemoveAttr : Attribute ==> ()
-RemoveAttr(pAttr) ==
-  attributes := attributes \ { pAttr }
-pre pAttr in set attributes;
+public RemoveAnnotation : BaggageAnnotation ==> ()
+RemoveAnnotation(pAnnot) ==
+  annotations := annotations \ { pAnnot }
+pre pAnnot in set annotations;
 
 public pure GetDestination : () ==> FlightDestination
 GetDestination() == return destination;

@@ -58,14 +58,14 @@ Run () ==
     station.Process(BHS`tote4);
     output := output ^ transport.ToJSON() ^ ", ";
     transport.Step();
---
---    for i = 1 to 30 by 1 do
---    (
---      IO`print("Stepping... \n");
---      output := output ^ transport.ToJSON() ^ ", ";
---      transport.Step();
---    );
---
+
+    for i = 1 to 30 by 1 do
+    (
+      IO`print("Stepping... \n");
+      output := output ^ transport.ToJSON() ^ ", ";
+      transport.Step();
+    );
+
     output := output ^ " { } ";
     output := output ^ "]";
     IO`print(output);

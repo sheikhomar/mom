@@ -3,9 +3,6 @@ types
 
 public StationID = token
 
-values
--- TODO Define values here
-
 instance variables
 
 private name : seq1 of char;
@@ -29,7 +26,7 @@ CanProcess() == is subclass responsibility;
 
 public Process : Tote ==> ()
 Process(tote) == is subclass responsibility
-pre CanProcess(); -- TODO: Are pre-conditions inherited?
+pre CanProcess();
 
 public Step : () ==> ()
 Step() == is subclass responsibility;

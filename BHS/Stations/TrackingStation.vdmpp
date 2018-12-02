@@ -8,7 +8,7 @@ TrackingStation(pId, pName) ==
 
 pure protected CanGoTowardsDischarge : Tote ==> bool
 CanGoTowardsDischarge(pTote) ==
-  return not pTote.GetBaggage().HasAttr(<BadTag>);
+  return not pTote.GetBaggage().HasAnnotation(<BadTag>);
 
 pure protected IsTowardsDischage : Station ==> bool
 IsTowardsDischage(pStation) ==

@@ -134,7 +134,7 @@ TestStepRemovesBagTagAttribute() ==
     Assert`assertTrue(inSegment.CanProcess(tote2));
     Assert`assertTrue(outSegment.CanProcess(tote2));
 
-    Assert`assertTrue(baggageWithFaultyTag.HasAttr(<BadTag>));
+    Assert`assertTrue(baggageWithFaultyTag.HasAnnotation(<BadTag>));
 
     StepAll();
     Assert`assertTrue(encoder.CanProcess());
@@ -142,7 +142,7 @@ TestStepRemovesBagTagAttribute() ==
     Assert`assertFalse(outSegment.CanProcess(tote2));
     -- Once the station has forwarded the baggage, it should remove
     -- the BadTag attribute from the baggage.
-    Assert`assertFalse(baggageWithFaultyTag.HasAttr(<BadTag>));
+    Assert`assertFalse(baggageWithFaultyTag.HasAnnotation(<BadTag>));
 
   );
 

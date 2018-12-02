@@ -1,7 +1,5 @@
 class World 
 
-types
-
 instance variables
 
 public static env : [Environment] := nil;

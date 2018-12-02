@@ -55,7 +55,6 @@ functions
 
 private HasCorrectSegmentConfiguration: StationID * set of Segment -> bool
 HasCorrectSegmentConfiguration(id, segments) ==
-  -- TODO: Why the warning "Pure operation call may not be referentially transparent"
   -- There must be at least one "in" segment and only one "out" segment
   HasAtLeastOneInSegment(id, segments) and HasOnlyOneOutSegment(id, segments);
 
@@ -72,6 +71,4 @@ HasAtLeastOneInSegment(pCurrentStationId, pAssociatedSegments) ==
   exists inSegment in set pAssociatedSegments &
     inSegment.IsTargetStation(pCurrentStationId);
 
-traces
--- TODO Define Combinatorial Test Traces here
 end CombineStation
