@@ -45,6 +45,17 @@ pure public Equals: Station ==> bool
 Equals(pOtherStation) ==
   return id = pOtherStation.id;
 
+
+protected pure FindInSegments : () ==> set of Segment
+FindInSegments() ==
+  return { seg | seg in set segments & seg.IsTargetStation(self) };
+
+
+protected pure FindOutSegments : () ==> set of Segment
+FindOutSegments() ==
+  return { seg | seg in set segments & seg.IsSourceStation(self) };
+
+
 functions
 
 protected GetInSegments : StationID * set of Segment -> set of Segment

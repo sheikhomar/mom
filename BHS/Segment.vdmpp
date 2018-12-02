@@ -23,7 +23,7 @@ Segment(pSourceStation, pTargetStation, pDistance) ==
     target.AddSegment(self);
     totePositions := [];
   )
--- Ensure that source and destination stations are different.
+-- Ensure that source and target stations are different.
 pre not pSourceStation.Equals(pTargetStation);
 
 public pure GetSourceStation : () ==> Station

@@ -7,67 +7,21 @@ CombineStation(pId, pName) ==
   Station(pId, pName);
 
 public pure CanProcess : () ==> bool
-CanProcess() == return currentTote = nil
-pre HasCorrectSegmentConfiguration(GetId(), segments);
---pre EnsureCorrectSegmentConfiguration(); // TODO Document this!
-
-public Process : Tote ==> ()
-Process(pTote) == currentTote := pTote;
+CanProcess() == Station`CanProcess()
+-- There can be at least one incoming segment and
+-- only one outgoing segment from a combine station
+pre card FindInSegments() > 0 and card FindOutSegments() = 1;
 
 public Step : () ==> ()
 Step() ==
-  (
-    dcl outSegment : Segment := GetOutSegment();
-    if currentTote <> nil and outSegment.CanProcess(currentTote)
-    then (
+  if currentTote <> nil
+  then
+    let outSegment in set segments be st outSegment.IsSourceStation(self)
+    in
+      if outSegment.CanProcess(currentTote)
+      then (
       outSegment.Process(currentTote);
-      currentTote := nil; -- Clean up so we can process the next tote
-    )
-  )
-pre HasCorrectSegmentConfiguration(GetId(), segments);
---pre EnsureCorrectSegmentConfiguration();
-
-private pure EnsureCorrectSegmentConfiguration: () ==> bool
-EnsureCorrectSegmentConfiguration() ==
-  (
-    -- There must be at least one "in" segment and only one "out" segment
-    return card FindInSegments() > 0 and card FindOutSegments() = 1;
-  );
-
-private pure FindInSegments : () ==> set of Segment
-FindInSegments() ==
-  return { seg | seg in set segments & seg.IsTargetStation(self) };
-
-
-private pure FindOutSegments : () ==> set of Segment
-FindOutSegments() ==
-  return { seg | seg in set segments & seg.IsSourceStation(self) };
-
-
-private pure GetOutSegment : () ==> Segment
-GetOutSegment() ==
-  let segment in set segments be st segment.IsSourceStation(self)
-  in return segment;
-
-
-functions
-
-private HasCorrectSegmentConfiguration: StationID * set of Segment -> bool
-HasCorrectSegmentConfiguration(id, segments) ==
-  -- There must be at least one "in" segment and only one "out" segment
-  HasAtLeastOneInSegment(id, segments) and HasOnlyOneOutSegment(id, segments);
-
-private HasOnlyOneOutSegment: StationID * set of Segment -> bool
-HasOnlyOneOutSegment(pCurrentStationId, pAssociatedSegments) ==
-  exists outSegment in set pAssociatedSegments &
-    outSegment.IsSourceStation(pCurrentStationId) and
-    forall otherSegment in set pAssociatedSegments &
-      not otherSegment.Equals(outSegment) =>
-        not otherSegment.IsSourceStation(pCurrentStationId);
-
-private HasAtLeastOneInSegment: StationID * set of Segment -> bool
-HasAtLeastOneInSegment(pCurrentStationId, pAssociatedSegments) ==
-  exists inSegment in set pAssociatedSegments &
-    inSegment.IsTargetStation(pCurrentStationId);
+      currentTote := nil;
+      );
 
 end CombineStation
