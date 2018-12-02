@@ -2,7 +2,6 @@ class CombineStation is subclass of Station
 
 operations
 
-
 public CombineStation : StationID * seq of char ==> CombineStation
 CombineStation(pId, pName) ==
   Station(pId, pName);
@@ -63,7 +62,7 @@ HasOnlyOneOutSegment(pCurrentStationId, pAssociatedSegments) ==
   exists outSegment in set pAssociatedSegments &
     outSegment.IsSourceStation(pCurrentStationId) and
     forall otherSegment in set pAssociatedSegments &
-      otherSegment.GetId() <> outSegment.GetId() =>
+      not otherSegment.Equals(outSegment) =>
         not otherSegment.IsSourceStation(pCurrentStationId);
 
 private HasAtLeastOneInSegment: StationID * set of Segment -> bool

@@ -7,11 +7,10 @@ CheckInStation(pId, pName) ==
   Station(pId, pName);
 
 pure public CanProcess : () ==> bool
-CanProcess() == return currentTote = nil
-pre HasCorrectSegmentConfiguration(GetId(), segments);
-
-public Process : Tote ==> ()
-Process(pTote) == currentTote := pTote;
+CanProcess() == return Station`CanProcess()
+pre
+  card segments = 1 and
+  exists s in set segments & s.IsSourceStation(self);
 
 public Step : () ==> ()
 Step() ==
@@ -22,12 +21,5 @@ Step() ==
       segment.Process(currentTote);
       currentTote := nil;
     );
-
-functions
-
-private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
-HasCorrectSegmentConfiguration(pStationId, pSegments) ==
-   card pSegments = 1 and
-   exists segment in set pSegments & segment.IsSourceStation(pStationId);
 
 end CheckInStation

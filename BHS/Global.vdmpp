@@ -2,12 +2,20 @@ class Global
 
 types
 
-public Length = nat1; -- Unit: cm
+public Length = nat1;
 public FlightDestination = <Beijing> | <NewYork> | <London> | <Copenhagen>;
 public BaggageAnnotation = <BadTag> | <FailsSecurityL1>;
-public TransportNetwork = seq1 of Station * seq1 of (seq1 of nat);
+
+public AdjacencyMatrix = seq1 of (seq1 of nat)
+inv matrix ==
+  forall i in set inds matrix & len(matrix) = len(matrix(i));
+
+public TransportNetwork = seq1 of Station * AdjacencyMatrix
+inv network == 
+  let mk_(stations, matrix) = network
+  in len(stations) = len(matrix);
+
 public StationID = token;
-public SegmentID = token;
 public ToteID = nat;
 public TotePosition :: Tote : Tote
                        Position : nat;

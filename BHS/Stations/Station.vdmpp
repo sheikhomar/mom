@@ -2,13 +2,12 @@ class Station is subclass of Global
 
 instance variables
 
-private name : seq1 of char;
-private id : StationID;
+protected id : StationID;
+protected name : seq1 of char;
 protected segments : set of Segment;
 protected currentTote : [Tote] := nil;
 
 operations
-
 
 public Station : StationID * seq1 of char ==> Station
 Station(pId, pName) ==
@@ -19,10 +18,10 @@ Station(pId, pName) ==
   );
 
 pure public CanProcess : () ==> bool
-CanProcess() == is subclass responsibility;
+CanProcess() == return currentTote = nil;
 
 public Process : Tote ==> ()
-Process(tote) == is subclass responsibility
+Process(pTote) == currentTote := pTote
 pre CanProcess();
 
 public Step : () ==> ()
@@ -38,9 +37,13 @@ public AddSegment : Segment ==> ()
 AddSegment(pSegment) == segments := segments union { pSegment }
 pre pSegment.HasStation(self);
 
-public pure GetCurrentTote : () ==> [Tote]
+pure public GetCurrentTote : () ==> [Tote]
 GetCurrentTote() ==
   return currentTote;
+
+pure public Equals: Station ==> bool
+Equals(pOtherStation) ==
+  return id = pOtherStation.id;
 
 functions
 

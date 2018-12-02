@@ -6,7 +6,6 @@ PositionChangePerStep = 10
 
 instance variables
 
-private id : token;
 private source : Station;
 private target : Station;
 private length : Length;
@@ -20,16 +19,12 @@ Segment(pSourceStation, pTargetStation, pDistance) ==
     source := pSourceStation;
     target := pTargetStation;
     length := pDistance;
-    id := mk_token([ source.GetId(), target.GetId(), length ]);
-
-    -- Back reference
     source.AddSegment(self);
     target.AddSegment(self);
-
     totePositions := [];
   )
 -- Ensure that source and destination stations are different.
-pre pSourceStation.GetId() <> pTargetStation.GetId();
+pre not pSourceStation.Equals(pTargetStation);
 
 public pure GetSourceStation : () ==> Station
 GetSourceStation() == return source;
@@ -62,9 +57,11 @@ IsTargetStation(pStationId) ==
 public pure GetLength : () ==> Length
 GetLength() == return length;
 
-public pure GetId : () ==> token
-GetId() == return id;
-
+public pure Equals : Segment ==> bool
+Equals(pOtherSegment) ==
+  return source.GetId() = pOtherSegment.source.GetId() and
+         target.GetId() = pOtherSegment.target.GetId()  and
+         length = pOtherSegment.length;
 
 public pure CanProcess : Tote ==> bool
 CanProcess(pTote) ==
