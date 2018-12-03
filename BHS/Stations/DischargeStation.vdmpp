@@ -7,25 +7,13 @@ DischargeStation(pId, pName) ==
   Station(pId, pName);
 
 public pure CanProcess : () ==> bool
-CanProcess() == return currentTote = nil
-pre HasCorrectSegmentConfiguration(GetId(), segments);
+CanProcess() == Station`CanProcess()
+-- There must be at least one incoming segment and no outgoing segments.
+pre card segments > 0 and
+    forall s in set segments & s.IsTargetStation(self);
 
-public Process : Tote ==> ()
-Process(pTote) == currentTote := pTote;
-
+-- Assume that the dischage station can process one tote at each step.
 public Step : () ==> ()
-Step() ==
-  (
-    -- Assume that the dischage station can process one tote at each step.
-    currentTote := nil;
-  );
-
-functions
-
-private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
-HasCorrectSegmentConfiguration(pId, pSegments) ==
-   -- There must at least be one "in" segment and no "out" segments
-   card pSegments > 0 and
-   forall segment in set pSegments & segment.IsTargetStation(pId);
+Step() == currentTote := nil;
 
 end DischargeStation

@@ -7,12 +7,12 @@ DestructionStation(pId, pName) ==
   Station(pId, pName);
 
 public pure CanProcess : () ==> bool
-CanProcess() == return currentTote = nil
-pre HasCorrectSegmentConfiguration(GetId(), segments);
+CanProcess() == Station`CanProcess()
+pre card FindInSegments() > 0 and card FindOutSegments() = 0;
 
 public Process : Tote ==> ()
-Process(pTote) == currentTote := pTote
-pre pTote.GetBaggage() <> nil;
+Process(pTote) == Station`Process(pTote)
+pre CanProcess() and pTote.GetBaggage() <> nil;
 
 public Step : () ==> ()
 Step() ==
@@ -23,12 +23,5 @@ Step() ==
       in skip;
     currentTote := nil;
   );
-
-functions
-
-private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
-HasCorrectSegmentConfiguration(pCurrentId, pSegments) ==
-  card GetOutSegments(pCurrentId, pSegments) = 0 and
-  card GetInSegments(pCurrentId, pSegments) > 0;
 
 end DestructionStation

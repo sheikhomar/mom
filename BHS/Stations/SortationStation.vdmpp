@@ -17,10 +17,11 @@ SortationStation(pId, pName) ==
 
 public pure CanProcess : () ==> bool
 CanProcess() == return currentTote = nil
-pre HasCorrectSegmentConfiguration(GetId(), segments);
-
-public Process : Tote ==> ()
-Process(pTote) == currentTote := pTote;
+pre -- Ensure that the station's segments go the
+    -- four destinations defined by mapping
+   forall stationId in set rng DestinationMap &
+     exists segment in set segments &
+       segment.IsTargetStation(stationId);
 
 public Step : () ==> ()
 Step() ==
@@ -35,14 +36,7 @@ Step() ==
         currentTote := nil;
       );
 
-
 functions
-
-private HasCorrectSegmentConfiguration : StationID * set of Segment -> bool
-HasCorrectSegmentConfiguration(pStationId, pSegments) ==
-   forall stationId in set rng DestinationMap &
-     exists segment in set pSegments &
-       segment.IsTargetStation(stationId);
 
 private GetNextSegment : Tote * StationID * set of Segment -> Segment
 GetNextSegment(pCurrentTote, pStationId, pSegments) ==

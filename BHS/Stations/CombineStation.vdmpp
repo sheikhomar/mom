@@ -20,8 +20,8 @@ Step() ==
     in
       if outSegment.CanProcess(currentTote)
       then (
-      outSegment.Process(currentTote);
-      currentTote := nil;
+        outSegment.Process(currentTote);
+        currentTote := nil;
       );
 
 end CombineStation

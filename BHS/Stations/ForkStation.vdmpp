@@ -8,11 +8,11 @@ ForkStation(pId, pName) ==
   Station(pId, pName);
 
 public pure CanProcess : () ==> bool
-CanProcess() == return currentTote = nil
+CanProcess() == Station`CanProcess()
 pre HasCorrectConfig();
 
 public Process : Tote ==> ()
-Process(pTote) == currentTote := pTote
+Process(pTote) == Station`Process(pTote)
 pre pTote.GetBaggage() <> nil;
 
 public Step : () ==> ()
