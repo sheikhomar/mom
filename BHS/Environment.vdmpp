@@ -58,7 +58,7 @@ Run() ==
         output := output ^ system.ToJSON() ^ ", ";
         IO`print("Stepping... \n");
         system.Step();
-        World`timer.StepTime();
+        World`timer.AdvanceTime();
       );
 
     output := output ^ " { } ";

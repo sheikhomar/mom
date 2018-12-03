@@ -19,9 +19,8 @@ public pure static GetInstance: () ==> TimeNotion
 GetInstance() ==
   return timerInstance;
 
-public StepTime : () ==> ()
-StepTime() ==
-  currentTime := currentTime + stepLength;
+public AdvanceTime : () ==> ()
+AdvanceTime() == currentTime := currentTime + stepLength;
 
 public pure GetCurrentTime : () ==> nat
 GetCurrentTime() ==
