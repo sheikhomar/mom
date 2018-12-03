@@ -15,7 +15,7 @@ private TimeNotion: () ==> TimeNotion
 TimeNotion() ==
   skip;
 
-pure public static GetInstance: () ==> TimeNotion
+public pure static GetInstance: () ==> TimeNotion
 GetInstance() ==
   return timerInstance;
 
@@ -23,7 +23,7 @@ public StepTime : () ==> ()
 StepTime() ==
   currentTime := currentTime + stepLength;
 
-pure public GetCurrentTime : () ==> nat
+public pure GetCurrentTime : () ==> nat
 GetCurrentTime() ==
   return currentTime;
 

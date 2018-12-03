@@ -6,7 +6,7 @@ public CheckInStation : StationID * seq of char ==> CheckInStation
 CheckInStation(pId, pName) ==
   Station(pId, pName);
 
-pure public CanProcess : () ==> bool
+public pure CanProcess : () ==> bool
 CanProcess() == return Station`CanProcess()
 pre
   card segments = 1 and

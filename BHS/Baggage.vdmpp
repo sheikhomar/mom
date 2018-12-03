@@ -21,14 +21,15 @@ Baggage(pDest, pInitialannotations) ==
     destination := pDest;
   );
 
-pure public HasAnnotation : BaggageAnnotation ==> bool
+public pure HasAnnotation : BaggageAnnotation ==> bool
 HasAnnotation(pAnnot) ==
   return pAnnot in set annotations;
 
 public RemoveAnnotation : BaggageAnnotation ==> ()
 RemoveAnnotation(pAnnot) ==
   annotations := annotations \ { pAnnot }
-pre pAnnot in set annotations;
+pre pAnnot in set annotations
+post pAnnot not in set annotations;
 
 public pure GetDestination : () ==> FlightDestination
 GetDestination() == return destination;

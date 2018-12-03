@@ -15,7 +15,7 @@ public SortationStation : StationID * seq of char ==> SortationStation
 SortationStation(pId, pName) ==
   Station(pId, pName);
 
-pure public CanProcess : () ==> bool
+public pure CanProcess : () ==> bool
 CanProcess() == return currentTote = nil
 pre HasCorrectSegmentConfiguration(GetId(), segments);
 

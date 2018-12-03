@@ -4,20 +4,22 @@ instance variables
 
 protected id : StationID;
 protected name : seq1 of char;
-protected segments : set of Segment;
 protected currentTote : [Tote] := nil;
+protected segments : set of Segment;
+inv forall segment in set segments & segment.HasStation(id);
 
 operations
 
 public Station : StationID * seq1 of char ==> Station
 Station(pId, pName) ==
+  atomic
   (
     id := pId;
     name := pName;
     segments := {};
   );
 
-pure public CanProcess : () ==> bool
+public pure CanProcess : () ==> bool
 CanProcess() == return currentTote = nil;
 
 public Process : Tote ==> ()
@@ -27,34 +29,37 @@ pre CanProcess();
 public Step : () ==> ()
 Step() == is subclass responsibility;
 
-pure public GetId : () ==> StationID
+public pure GetId : () ==> StationID
 GetId() == return id;
 
-pure public GetName : () ==> seq of char
+public pure GetName : () ==> seq of char
 GetName() == return name;
 
 public AddSegment : Segment ==> ()
 AddSegment(pSegment) == segments := segments union { pSegment }
-pre pSegment.HasStation(self);
+pre pSegment.HasStation(self)
+post self.HasSegment(pSegment);
 
-pure public GetCurrentTote : () ==> [Tote]
+public pure GetCurrentTote : () ==> [Tote]
 GetCurrentTote() ==
   return currentTote;
 
-pure public Equals: Station ==> bool
+public pure Equals: Station ==> bool
 Equals(pOtherStation) ==
   return id = pOtherStation.id;
 
 
-protected pure FindInSegments : () ==> set of Segment
+public pure FindInSegments : () ==> set of Segment
 FindInSegments() ==
   return { seg | seg in set segments & seg.IsTargetStation(self) };
 
 
-protected pure FindOutSegments : () ==> set of Segment
+public pure FindOutSegments : () ==> set of Segment
 FindOutSegments() ==
   return { seg | seg in set segments & seg.IsSourceStation(self) };
 
+public pure HasSegment : Segment ==> bool
+HasSegment(pSegment) == return pSegment in set segments;
 
 functions
 

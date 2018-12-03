@@ -7,7 +7,7 @@ public ForkStation : StationID * seq of char ==> ForkStation
 ForkStation(pId, pName) ==
   Station(pId, pName);
 
-pure public CanProcess : () ==> bool
+public pure CanProcess : () ==> bool
 CanProcess() == return currentTote = nil
 pre HasCorrectConfig();
 

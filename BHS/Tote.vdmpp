@@ -20,13 +20,14 @@ GetLength() == return length;
 public pure GetBaggage : () ==> [Baggage]
 GetBaggage() == return baggage;
 
-pure public IsFree : () ==> bool
+public pure IsFree : () ==> bool
 IsFree() == return baggage = nil;
 
 public Load : Baggage ==> ()
 Load(pBaggage) ==
   baggage := pBaggage
-pre IsFree();
+pre IsFree()
+post not IsFree() and GetBaggage() = pBaggage;
 
 public Unload : () ==> Baggage
 Unload() ==
@@ -35,6 +36,7 @@ Unload() ==
     baggage := nil;
     return b;
   )
-pre not IsFree();
+pre not IsFree()
+post IsFree();
 
 end Tote

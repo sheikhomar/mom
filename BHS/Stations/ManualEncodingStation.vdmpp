@@ -22,7 +22,7 @@ public ManualEncodingStation : StationID * seq of char ==> ManualEncodingStation
 ManualEncodingStation(pId, pName) ==
   ManualEncodingStation(pId, pName, DefaultNumberOfStepsForProcessing);
 
-pure public CanProcess : () ==> bool
+public pure CanProcess : () ==> bool
 CanProcess() == return currentTote = nil
 pre HasCorrectSegmentConfiguration(GetId(), segments);
 

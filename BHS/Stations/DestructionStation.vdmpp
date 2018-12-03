@@ -6,7 +6,7 @@ public DestructionStation : StationID * seq of char ==> DestructionStation
 DestructionStation(pId, pName) ==
   Station(pId, pName);
 
-pure public CanProcess : () ==> bool
+public pure CanProcess : () ==> bool
 CanProcess() == return currentTote = nil
 pre HasCorrectSegmentConfiguration(GetId(), segments);
 

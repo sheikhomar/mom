@@ -24,7 +24,8 @@ Segment(pSourceStation, pTargetStation, pDistance) ==
     totePositions := [];
   )
 -- Ensure that source and target stations are different.
-pre not pSourceStation.Equals(pTargetStation);
+pre not pSourceStation.Equals(pTargetStation)
+post pSourceStation.HasSegment(self) and pTargetStation.HasSegment(self);
 
 public pure GetSourceStation : () ==> Station
 GetSourceStation() == return source;
@@ -37,6 +38,11 @@ public pure HasStation : Station ==> bool
 HasStation(pStation) ==
   return pStation.GetId() = source.GetId() or
          pStation.GetId() = target.GetId();
+
+public pure HasStation : StationID ==> bool
+HasStation(pStationId) ==
+  return pStationId = source.GetId() or
+         pStationId = target.GetId();
 
 public pure IsSourceStation : Station ==> bool
 IsSourceStation(pStation) ==
