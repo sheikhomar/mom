@@ -6,11 +6,11 @@ public ScreeningL1Station : StationID * seq of char ==> ScreeningL1Station
 ScreeningL1Station(pId, pName) ==
   ForkStation(pId, pName);
 
-pure protected CanGoTowardsDischarge : Tote ==> bool
+protected pure CanGoTowardsDischarge : Tote ==> bool
 CanGoTowardsDischarge(pTote) ==
   return not pTote.GetBaggage().HasAnnotation(<FailsSecurityL1>);
 
-pure protected IsTowardsDischage : Station ==> bool
+protected pure IsTowardsDischage : Station ==> bool
 IsTowardsDischage(pStation) ==
   return not isofclass(DestructionStation, pStation);
 

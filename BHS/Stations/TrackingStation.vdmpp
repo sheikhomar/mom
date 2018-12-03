@@ -6,11 +6,11 @@ public TrackingStation : StationID * seq of char ==> TrackingStation
 TrackingStation(pId, pName) ==
   ForkStation(pId, pName);
 
-pure protected CanGoTowardsDischarge : Tote ==> bool
+protected pure CanGoTowardsDischarge : Tote ==> bool
 CanGoTowardsDischarge(pTote) ==
   return not pTote.GetBaggage().HasAnnotation(<BadTag>);
 
-pure protected IsTowardsDischage : Station ==> bool
+protected pure IsTowardsDischage : Station ==> bool
 IsTowardsDischage(pStation) ==
   return not isofclass(ManualEncodingStation, pStation);
 

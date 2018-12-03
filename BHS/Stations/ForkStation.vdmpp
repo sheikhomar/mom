@@ -38,13 +38,13 @@ Step() ==
   )
 pre HasCorrectConfig();
 
-pure protected CanGoTowardsDischarge : Tote ==> bool
+protected pure CanGoTowardsDischarge : Tote ==> bool
 CanGoTowardsDischarge(-) == is subclass responsibility;
 
-pure protected IsTowardsDischage : Station ==> bool
+protected pure IsTowardsDischage : Station ==> bool
 IsTowardsDischage(-) == is subclass responsibility;
 
-pure protected FindOtherSegment : StationID * set of Segment ==> Segment
+protected pure FindOtherSegment : StationID * set of Segment ==> Segment
 FindOtherSegment(pCurrentStationId, pSegments) ==
   return let towardsOther in set
     { segment | segment in set pSegments &
@@ -54,7 +54,7 @@ FindOtherSegment(pCurrentStationId, pSegments) ==
     }
   in towardsOther;
 
-pure protected FindDischargeSegment : StationID * set of Segment ==> Segment
+protected pure FindDischargeSegment : StationID * set of Segment ==> Segment
 FindDischargeSegment(pCurrentStationId, pSegments) ==
   return let towardsDischarge in set
     { segment | segment in set pSegments &
@@ -64,7 +64,7 @@ FindDischargeSegment(pCurrentStationId, pSegments) ==
     }
   in towardsDischarge;
 
-pure protected HasCorrectConfig : () ==> bool
+protected pure HasCorrectConfig : () ==> bool
 HasCorrectConfig() ==
   return
     let outSegments = { s | s in set segments & s.IsSourceStation(GetId()) }
